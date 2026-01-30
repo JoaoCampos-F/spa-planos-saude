@@ -1,12 +1,8 @@
 import BaseHttp from "../../BaseHttp";
 
-import type {
-  InterfaceList,
-} from "./Interface";
+import type { InterfaceList } from "./Interface";
 
-class Colaboradores extends BaseHttp<
-  InterfaceList
-> {
+class Colaboradores extends BaseHttp<InterfaceList> {
   resource(): string {
     return "colaborador";
   }
