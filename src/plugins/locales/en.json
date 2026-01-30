@@ -1,0 +1,49 @@
+{
+  "bemvindos": "Welcome",
+  "usuário": "User",
+  "sair": "Logout",
+  "relatorios": "Reports",
+  "dados": "Data",
+  "notas": "Grades",
+  "valores-possiveis": "Possible Values",
+  "final": "Final",
+  "titulo-relatorio-dados": "PPLR Data Report",
+  "titulo-relatorio-notas": "PPLR Grades Report",
+  "titulo-relatorio-valores-possiveis": "PPLR Possible Values Report",
+  "titulo-relatorio-final": "PPLR Final Report",
+  "tabelas": {
+    "empresa": "Comp.",
+    "empresa-label": "Company",
+    "departamento-label": "Department",
+    "colaborador-label": "Employee",
+    "grupo-funcao-label": "Function Group",
+    "funcao-label": "Function",
+    "parametro-label": "Parameter"
+  },
+  "date": {
+    "dia": "Day",
+    "mes": "Month",
+    "ano": "Year",
+    "mes-abreviado-label": {
+      "01": "JAN",
+      "02": "FEB",
+      "03": "MAR",
+      "04": "APR",
+      "05": "MAY",
+      "06": "JUN",
+      "07": "JUL",
+      "08": "AUG",
+      "09": "SEP",
+      "10": "OCT",
+      "11": "NOV",
+      "12": "DEC"
+    }
+  },
+  "filtros": {
+    "limpar-filtros": "Clear Filters"
+  },
+  "downloads": {
+    "download-relatorio": "Download Report",
+    "visualizar-relatorio": "View Report"
+  }
+}

@@ -1,0 +1,6 @@
+// Settings SCSS para Vuetify
+// Arquivo de configuração de estilos globais
+
+@use "vuetify/settings" with (
+  $utilities: false
+);

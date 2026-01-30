@@ -1,0 +1,49 @@
+{
+  "bemvindos": "Bem-vindo",
+  "usuário": "Usuário",
+  "sair": "Sair",
+  "relatorios": "Relatórios",
+  "dados": "Dados",
+  "notas": "Notas",
+  "valores-possiveis": "Valores Possíveis",
+  "final": "Final",
+  "titulo-relatorio-dados": "Relatório de Dados PPLR",
+  "titulo-relatorio-notas": "Relatório de Notas PPLR",
+  "titulo-relatorio-valores-possiveis": "Relatório de Valores Possíveis PPLR",
+  "titulo-relatorio-final": "Relatório Final PPLR",
+  "tabelas": {
+    "empresa": "Emp.",
+    "empresa-label": "Empresa",
+    "departamento-label": "Departamento",
+    "colaborador-label": "Colaborador",
+    "grupo-funcao-label": "Grupo Função",
+    "funcao-label": "Função",
+    "parametro-label": "Parâmetro"
+  },
+  "date": {
+    "dia": "Dia",
+    "mes": "Mês",
+    "ano": "Ano",
+    "mes-abreviado-label": {
+      "01": "JAN",
+      "02": "FEV",
+      "03": "MAR",
+      "04": "ABR",
+      "05": "MAI",
+      "06": "JUN",
+      "07": "JUL",
+      "08": "AGO",
+      "09": "SET",
+      "10": "OUT",
+      "11": "NOV",
+      "12": "DEZ"
+    }
+  },
+  "filtros": {
+    "limpar-filtros": "Limpar Filtros"
+  },
+  "downloads": {
+    "download-relatorio": "Fazer download do relatório",
+    "visualizar-relatorio": "Visualizar relatório"
+  }
+}
