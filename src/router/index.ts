@@ -1,9 +1,3 @@
-/**
- * router/index.ts
- *
- * Automatic routes for `./src/pages/*.vue`
- */
-
 import { createRouter, createWebHistory } from "vue-router/auto";
 import SideBarNavigation from "@/layouts/sidebar-navigation/index.vue";
 import PageNotFound from "@/pages/PageNotFound.vue";
