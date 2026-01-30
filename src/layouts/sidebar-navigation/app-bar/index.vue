@@ -8,7 +8,7 @@
     height="60"
   >
     <v-container height="65" :width="drawer ? 260 : 90">
-      <img
+      <!-- <img
         alt="logo do sistema"
         class="ml-2"
         src="@/assets/icon-grey-scale.svg"
@@ -20,14 +20,14 @@
         class="logo"
         src="@/assets/logo-texto-grey-scale.svg"
         width="80"
-      />
+      /> -->
     </v-container>
 
     <v-btn
       class="ma-1"
       density="comfortable"
       icon
-      @click="$emit('toggle-drawer'), toggleDrawer()"
+      @click="($emit('toggle-drawer'), toggleDrawer())"
     >
       <v-icon icon="solar:list-bold" size="22" />
     </v-btn>
@@ -139,7 +139,7 @@
         class="ma-1 ml-4"
         density="comfortable"
         icon
-        @click="$emit('toggle-drawer'), toggleDrawer()"
+        @click="($emit('toggle-drawer'), toggleDrawer())"
       >
         <v-icon icon="solar:list-bold" size="22" />
       </v-btn>
@@ -152,20 +152,18 @@
     </v-container>
 
     <v-container class="d-flex align-center justify-center" height="65">
-      <img
+      <!-- <img
         alt="logo do sistema"
         class="ml-2"
         src="@/assets/icon-grey-scale.svg"
         width="30"
-      />
+      /> -->
     </v-container>
 
     <v-container class="d-flex align-center justify-center">
       <v-btn class="ma-1" density="comfortable" icon @click="toggleTheme">
         <v-icon
-          :icon="
-            isDarkTheme ? 'solar:sun-line-duotone' : 'solar:moon-broken'
-          "
+          :icon="isDarkTheme ? 'solar:sun-line-duotone' : 'solar:moon-broken'"
           size="21"
         />
       </v-btn>
@@ -231,7 +229,7 @@
 import { computed, onMounted, ref, watch } from "vue";
 import vuetify from "@/plugins/vuetify";
 import { ssoStore } from "@/stores/sso";
-import axios from 'axios';
+import axios from "axios";
 
 const user = ssoStore().getUser;
 const keycloak = ssoStore().getKeycloak;
@@ -239,7 +237,7 @@ const keycloak = ssoStore().getKeycloak;
 const drawer = ref(!vuetify.display.mobile.value);
 const group = ref(null);
 
-const base64Image = ref('');
+const base64Image = ref("");
 
 watch(group, () => {
   drawer.value = false;
@@ -274,33 +272,33 @@ onMounted(() => {
 });
 
 function formatImage(base64String: string) {
-    const bytesPng =
-      'iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC';
+  const bytesPng =
+    "iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC";
 
-    if (base64String.includes(bytesPng)) {
-      return 'data:image/png;base64,' + base64String;
-    }
-
-    return 'data:image/jpeg;base64,' + base64String;
+  if (base64String.includes(bytesPng)) {
+    return "data:image/png;base64," + base64String;
   }
 
-  function fetchImageUser() {
-    axios
-      .get(import.meta.env.VITE_API_BIRTHDAY, {
-        params: {
-          cpf: user?.cpf
-        }
-      })
-      .then(response => {
-        const { data } = response.data;
-        const base64String = data[0].imagem;
+  return "data:image/jpeg;base64," + base64String;
+}
 
-        base64Image.value = formatImage(base64String);
-      })
-      .catch(error => {
-        console.error('Erro ao buscar dados:', error);
-      });
-  }
+function fetchImageUser() {
+  axios
+    .get(import.meta.env.VITE_API_BIRTHDAY, {
+      params: {
+        cpf: user?.cpf,
+      },
+    })
+    .then((response) => {
+      const { data } = response.data;
+      const base64String = data[0].imagem;
+
+      base64Image.value = formatImage(base64String);
+    })
+    .catch((error) => {
+      console.error("Erro ao buscar dados:", error);
+    });
+}
 </script>
 
 <style scoped>
