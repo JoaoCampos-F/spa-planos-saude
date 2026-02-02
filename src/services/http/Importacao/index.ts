@@ -18,41 +18,55 @@ export interface ImportacaoResponse {
   registrosImportados: number;
 }
 
-export default class ImportacaoHttp extends BaseHttp<ImportacaoResponse> {
+export interface ImportarPeriodoParams {
+  mes: string; // "01", "02"
+  ano: string; // "2026"
+}
+
+export interface ImportacaoCompletaResponse {
+  sucesso: boolean;
+  periodo: string;
+  resumo: {
+    cnpj: {
+      totalImportado: number;
+      empresasProcessadas: number;
+      erros: string[];
+    };
+    contrato: {
+      totalImportado: number;
+      contratosProcessados: number;
+      erros: string[];
+    };
+    totalGeral: number;
+  };
+  timestamp: string;
+}
+
+export default class ImportacaoHttp extends BaseHttp<ImportacaoCompletaResponse> {
   resource(): string {
     return "/importacao";
   }
 
   /**
-   * POST /importacao/cnpj
-   * Importa dados por CNPJ
+   * POST /importacao/importar-periodo
+   * Importa dados completos (CNPJ + Contrato) de um período
    */
+  async importarPeriodoCompleto(params: ImportarPeriodoParams) {
+    return this.http.post<ImportacaoCompletaResponse>(
+      `${this.resource()}/importar-periodo`,
+      params,
+    );
+  }
+
   async importarPorCnpj(params: ImportarCnpjParams) {
-    return this.http.post<ImportacaoResponse>(
-      `${this.resource()}/cnpj`,
-      params,
-    );
+    return this.http.post(`${this.resource()}/cnpj`, params);
   }
 
-  /**
-   * POST /importacao/contrato
-   * Importa dados por Contrato
-   */
   async importarPorContrato(params: ImportarContratoParams) {
-    return this.http.post<ImportacaoResponse>(
-      `${this.resource()}/contrato`,
-      params,
-    );
+    return this.http.post(`${this.resource()}/contrato`, params);
   }
 
-  /**
-   * POST /importacao/resumo
-   * Importa resumo geral
-   */
   async importarResumo(params: any) {
-    return this.http.post<ImportacaoResponse>(
-      `${this.resource()}/resumo`,
-      params,
-    );
+    return this.http.post(`${this.resource()}/resumo`, params);
   }
 }

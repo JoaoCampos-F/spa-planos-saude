@@ -17,13 +17,13 @@ export default createVuetify({
       light: {
         dark: false,
         colors: {
-          primary: "#1B84FF",
-          secondary: "#43CED7",
+          primary: "#fb6b5b",
+          secondary: "#fb6b5b",
           accent: "#82B1FF",
           background: "#EEF5F9",
           surface: "#FFFFFF",
           error: "#FF5252",
-          info: "#2196F3",
+          info: "#fb6b5b",
           success: "#4CAF50",
           warning: "#FB8C00",
           orquestrador: "#3b02a5",
@@ -32,8 +32,8 @@ export default createVuetify({
       dark: {
         dark: true,
         colors: {
-          primary: "#166ACC",
-          secondary: "#0A949E",
+          primary: "#fb6b5b",
+          secondary: "#fb6b5b",
           accent: "#FF4081",
           background: "#192838",
           surface: "#152332",

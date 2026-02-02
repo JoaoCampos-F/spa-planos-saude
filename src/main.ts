@@ -1,9 +1,3 @@
-/**
- * main.ts
- *
- * Bootstraps Vuetify and other plugins then mounts the App
- */
-
 // Plugins
 import { registerPlugins } from "@/plugins";
 
@@ -16,10 +10,20 @@ import { createApp } from "vue";
 // Styles
 import "unfonts.css";
 import { Icon } from "@iconify/vue";
+import keycloak from "./config/keycloak";
 
-const app = createApp(App);
+keycloak
+  .init({ onLoad: "login-required", checkLoginIframe: false })
+  .then((auth) => {
+    if (auth) {
+      const app = createApp(App);
 
-app.component("AppIcon", Icon);
-registerPlugins(app);
+      app.component("AppIcon", Icon);
+      registerPlugins(app);
 
-app.mount("#app");
+      app.mount("#app");
+    }
+  })
+  .catch((err) => {
+    console.error("Erro ao inicializar o Keycloak:", err);
+  });

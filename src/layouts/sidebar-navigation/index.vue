@@ -3,7 +3,7 @@
     <v-layout class="fill-height">
       <AppBar @toggle-drawer="toggleDrawer" />
       <MenuDrawer :drawer="drawer" @update:drawer="toggleDrawer" />
-      <v-main :class="'fill-height theme-'+vuetify.theme.name.value">
+      <v-main :class="'fill-height theme-' + vuetify.theme.name.value">
         <v-container class="px-7 mt-3" max-width="1920">
           <router-view />
         </v-container>
@@ -28,11 +28,9 @@ watch(group, () => {
   drawer.value = false;
 });
 
-
 function toggleDrawer() {
   drawer.value = !drawer.value;
 }
-
 </script>
 
 <style>
@@ -49,11 +47,10 @@ body {
 }
 
 .theme-light {
-  background-color: #EEF5F9;
+  background-color: #eef5f9;
 }
 
 .theme-dark {
   background-color: #192838;
 }
-
 </style>

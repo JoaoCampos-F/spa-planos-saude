@@ -7,21 +7,7 @@
     elevation="0"
     height="60"
   >
-    <v-container height="65" :width="drawer ? 260 : 90">
-      <!-- <img
-        alt="logo do sistema"
-        class="ml-2"
-        src="@/assets/icon-grey-scale.svg"
-        width="30"
-      />
-      <img
-        v-if="drawer"
-        alt="logo do sistema"
-        class="logo"
-        src="@/assets/logo-texto-grey-scale.svg"
-        width="80"
-      /> -->
-    </v-container>
+    <v-container height="65" :width="65"> </v-container>
 
     <v-btn
       class="ma-1"
@@ -130,7 +116,7 @@
   <v-app-bar
     v-if="vuetify.display.mobile.value"
     class="pa-0 d-flex justify-space-between"
-    color="#1B84FF"
+    color="primary"
     elevation="0"
     height="60"
   >
@@ -152,12 +138,6 @@
     </v-container>
 
     <v-container class="d-flex align-center justify-center" height="65">
-      <!-- <img
-        alt="logo do sistema"
-        class="ml-2"
-        src="@/assets/icon-grey-scale.svg"
-        width="30"
-      /> -->
     </v-container>
 
     <v-container class="d-flex align-center justify-center">
