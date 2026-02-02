@@ -11,16 +11,9 @@ type Permissions = {
 export const permissions = defineStore("permissionStore", {
   state: (): Permissions => {
     return {
-      permissions: {
-        comissao: ["list-all"],
-      },
+      permissions: {},
       roles: [],
-      rolesSystem: [
-        "admin",
-        "gerente",
-        "colaborador",
-      ],
-      //concessionaria tem rh e financeiro
+      rolesSystem: ["ADMIN", "DP", "COLABORADOR"],
     };
   },
 

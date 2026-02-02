@@ -1,6 +1,8 @@
 import { createRouter, createWebHistory } from "vue-router";
 import SideBarNavigation from "@/layouts/sidebar-navigation/index.vue";
 import PageNotFound from "@/pages/PageNotFound.vue";
+import keycloak from "@/config/keycloak";
+import { permissions } from "@/stores/permissionsStore";
 
 // Páginas - Importação
 import PageImportacao from "@/pages/importacao/index.vue";
@@ -36,84 +38,98 @@ const router = createRouter({
       component: SideBarNavigation,
       meta: { requiresAuth: true },
       children: [
-        // Módulo Importação
+        // Módulo Importação (ADMIN, DP)
         {
           path: "/importacao",
           name: "PageImportacao",
           component: PageImportacao,
+          meta: { requiresAuth: true, roles: ["ADMIN", "DP"] },
         },
         {
           path: "/importacao/cnpj",
           name: "PageImportacaoCnpj",
           component: PageImportacaoCnpj,
+          meta: { requiresAuth: true, roles: ["ADMIN", "DP"] },
         },
         {
           path: "/importacao/contrato",
           name: "PageImportacaoContrato",
           component: PageImportacaoContrato,
+          meta: { requiresAuth: true, roles: ["ADMIN", "DP"] },
         },
 
-        // Módulo Colaboradores
+        // Módulo Colaboradores (ADMIN, DP)
         {
           path: "/colaboradores",
           name: "PageColaboradores",
           component: PageColaboradores,
+          meta: { requiresAuth: true, roles: ["ADMIN", "DP"] },
         },
 
-        // Módulo Processos
+        // Módulo Processos (ADMIN, DP)
         {
           path: "/processos",
           name: "PageProcessos",
           component: PageProcessos,
+          meta: { requiresAuth: true, roles: ["ADMIN", "DP"] },
         },
         {
           path: "/processos/historico",
           name: "PageProcessosHistorico",
           component: PageProcessosHistorico,
+          meta: { requiresAuth: true, roles: ["ADMIN", "DP"] },
         },
 
-        // Módulo Exportação
+        // Módulo Exportação (ADMIN, DP)
         {
           path: "/exportacao",
           name: "PageExportacao",
           component: PageExportacao,
+          meta: { requiresAuth: true, roles: ["ADMIN", "DP"] },
         },
 
-        // Módulo Relatórios
+        // Módulo Relatórios (Todos autenticados)
         {
           path: "/relatorios",
           name: "PageRelatorios",
           component: PageRelatorios,
+          meta: { requiresAuth: true },
         },
         {
           path: "/relatorios/colaborador",
           name: "PageRelatorioColaborador",
           component: PageRelatorioColaborador,
+          meta: { requiresAuth: true },
         },
         {
           path: "/relatorios/empresa",
           name: "PageRelatorioEmpresa",
           component: PageRelatorioEmpresa,
+          meta: { requiresAuth: true },
         },
         {
           path: "/relatorios/pagamento",
           name: "PageRelatorioPagamento",
           component: PageRelatorioPagamento,
+          meta: { requiresAuth: true },
         },
         {
           path: "/relatorios/nao-pagamento",
           name: "PageRelatorioNaoPagamento",
           component: PageRelatorioNaoPagamento,
+          meta: { requiresAuth: true },
         },
         {
           path: "/relatorios/resumo-depto",
           name: "PageRelatorioResumoDepto",
           component: PageRelatorioResumoDepto,
+          meta: { requiresAuth: true },
         },
         {
           path: "/relatorios/centro-custo",
           name: "PageRelatorioResumoCentroCusto",
           component: PageRelatorioResumoCentroCusto,
+          meta: { requiresAuth: true },
         },
       ],
     },
@@ -124,6 +140,39 @@ const router = createRouter({
       meta: { title: "404 - Página Não Encontrada" },
     },
   ],
+});
+
+// Guard global de autenticação e roles
+router.beforeEach((to, from, next) => {
+  const requiresAuth = to.meta.requiresAuth;
+
+  // 1. Verifica se rota requer autenticação
+  if (requiresAuth && !keycloak.authenticated) {
+    console.warn("🔒 Acesso negado - Usuário não autenticado");
+    keycloak.login();
+    return;
+  }
+
+  // 2. Verifica roles necessárias
+  const requiredRoles = to.meta.roles as string[] | undefined;
+  if (requiredRoles && requiredRoles.length > 0) {
+    const storePermission = permissions();
+    const userRoles = storePermission.getRoles;
+
+    const hasRole = requiredRoles.some((role) =>
+      userRoles.includes(role.toUpperCase()),
+    );
+
+    if (!hasRole) {
+      console.warn(
+        `🔒 Acesso negado - Role insuficiente. Necessário: ${requiredRoles.join(" ou ")}. Usuário tem: ${userRoles.join(", ")}`,
+      );
+      next({ name: "PageRelatorios" }); // Redireciona para relatórios (acesso geral)
+      return;
+    }
+  }
+
+  next();
 });
 
 // Workaround for https://github.com/vitejs/vite/issues/11804
