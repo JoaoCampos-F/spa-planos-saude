@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from "vue-router/auto";
+import { createRouter, createWebHistory } from "vue-router";
 import SideBarNavigation from "@/layouts/sidebar-navigation/index.vue";
 import PageNotFound from "@/pages/PageNotFound.vue";
 
@@ -127,7 +127,7 @@ const router = createRouter({
 });
 
 // Workaround for https://github.com/vitejs/vite/issues/11804
-router.onError((err, to) => {
+router.onError((err: any, to: any) => {
   if (err?.message?.includes?.("Failed to fetch dynamically imported module")) {
     if (!localStorage.getItem("vuetify:dynamic-reload")) {
       console.log("Reloading page to fix dynamic import error");
