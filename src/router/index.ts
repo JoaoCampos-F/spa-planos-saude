@@ -32,8 +32,11 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: "/",
-      redirect: "/importacao",
+      path: "",
+      redirect: (to) => {
+        // Redirect será determinado no guard baseado nas roles
+        return "/relatorios";
+      },
       name: "SideBarNavigation",
       component: SideBarNavigation,
       meta: { requiresAuth: true },
@@ -153,10 +156,63 @@ router.beforeEach((to, from, next) => {
     return;
   }
 
-  // 2. Verifica roles necessárias
+  // 2. Redirect inteligente da rota raiz
+  if (to.path === "/" || to.name === "SideBarNavigation") {
+    const storePermission = permissions();
+
+    if (!storePermission.isLoading) {
+      const userRoles = storePermission.getRoles;
+
+      // Determina primeira página acessível baseada nas roles
+      if (userRoles.includes("ADMIN") || userRoles.includes("DP")) {
+        console.log("🏠 Redirecionando para /importacao (role: ADMIN/DP)");
+        next({ name: "PageImportacao" });
+        return;
+      } else {
+        console.log("🏠 Redirecionando para /relatorios (role: COLABORADOR)");
+        next({ name: "PageRelatorios" });
+        return;
+      }
+    } else {
+      // Se ainda está carregando, redireciona para relatórios (acesso geral)
+      console.log("🏠 Redirecionando para /relatorios (loading...)");
+      next({ name: "PageRelatorios" });
+      return;
+    }
+  }
+
+  // 3. Verifica roles necessárias
   const requiredRoles = to.meta.roles as string[] | undefined;
   if (requiredRoles && requiredRoles.length > 0) {
     const storePermission = permissions();
+
+    // ⏳ Se ainda está carregando permissões, permite navegação temporariamente
+    if (storePermission.isLoading) {
+      console.log("⏳ Aguardando carregamento de permissões...");
+      next();
+
+      // 🔄 Adiciona watcher para validar após loading
+      const unwatch = storePermission.$subscribe((mutation, state) => {
+        if (!state.loading) {
+          unwatch(); // Remove watcher
+
+          const userRoles = storePermission.getRoles;
+          const hasRole = requiredRoles.some((role) =>
+            userRoles.includes(role.toUpperCase()),
+          );
+
+          if (!hasRole && router.currentRoute.value.path === to.path) {
+            console.warn(
+              `🔒 Acesso negado (pós-loading) - Role insuficiente. Necessário: ${requiredRoles.join(" ou ")}`,
+            );
+            router.push({ name: "PageRelatorios" });
+          }
+        }
+      });
+
+      return;
+    }
+
     const userRoles = storePermission.getRoles;
 
     const hasRole = requiredRoles.some((role) =>
@@ -167,7 +223,13 @@ router.beforeEach((to, from, next) => {
       console.warn(
         `🔒 Acesso negado - Role insuficiente. Necessário: ${requiredRoles.join(" ou ")}. Usuário tem: ${userRoles.join(", ")}`,
       );
-      next({ name: "PageRelatorios" }); // Redireciona para relatórios (acesso geral)
+
+      // Evita loop: se já está indo para relatórios, não redireciona novamente
+      if (to.name !== "PageRelatorios") {
+        next({ name: "PageRelatorios" });
+      } else {
+        next();
+      }
       return;
     }
   }

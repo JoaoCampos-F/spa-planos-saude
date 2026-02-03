@@ -1,13 +1,6 @@
-// Plugins
 import { registerPlugins } from "@/plugins";
-
-// Components
 import App from "./App.vue";
-
-// Composables
 import { createApp } from "vue";
-
-// Styles
 import "unfonts.css";
 import { Icon } from "@iconify/vue";
 import keycloak from "./config/keycloak";
@@ -27,32 +20,66 @@ keycloak
     registerPlugins(app);
     app.use(canDirective);
 
-    // 1️⃣ Armazena instância Keycloak
     const sso = ssoStore();
     sso.setKeyCloak(keycloak);
 
     if (auth) {
+      try {
+        const rptResponse = await fetch(
+          `${keycloak.authServerUrl}/realms/${keycloak.realm}/protocol/openid-connect/token`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+              Authorization: `Bearer ${keycloak.token}`,
+            },
+            body: new URLSearchParams({
+              grant_type: "urn:ietf:params:oauth:grant-type:uma-ticket",
+              audience: "api-planos-saude",
+            }),
+          },
+        );
+
+        if (rptResponse.ok) {
+          const rptData = await rptResponse.json();
+
+          keycloak.token = rptData.access_token;
+
+          const tokenParsed = JSON.parse(
+            atob(rptData.access_token.split(".")[1]),
+          );
+        } else {
+          console.warn(
+            "⚠️ Não foi possível obter RPT, usando access token normal",
+          );
+        }
+      } catch (error) {
+        console.error("❌ Erro ao solicitar RPT:", error);
+      }
+
       app.mount("#app");
 
-      // 2️⃣ Busca permissões do usuário
-      try {
-        const { data } = await Auth().store({});
-        const storePermission = permissions();
-        storePermission.setPermissions(data);
-        console.log("✅ Permissões carregadas:", data.roles);
-      } catch (error) {
-        console.error("❌ Erro ao buscar permissões:", error);
-      }
+      (async () => {
+        try {
+          const storePermission = permissions();
+          storePermission.setLoading(true);
 
-      // 3️⃣ Busca dados do colaborador
-      try {
-        const currentUserSystem = await Colaborador().list({});
-        const storeUserSystem = userSystem();
-        storeUserSystem.setUserSystem(currentUserSystem.data);
-        console.log("✅ Dados do colaborador carregados");
-      } catch (error) {
-        console.error("❌ Erro ao buscar dados do colaborador:", error);
-      }
+          const { data } = await Auth().list({});
+          storePermission.setPermissions(data);
+          console.log("✅ Permissões carregadas:", data.roles);
+
+          const currentUserSystem = await Colaborador().list({});
+          const storeUserSystem = userSystem();
+          storeUserSystem.setUserSystem(currentUserSystem.data);
+          console.log("✅ Dados do colaborador carregados");
+
+          storePermission.setLoading(false);
+        } catch (error) {
+          console.error("❌ Erro ao carregar dados do usuário:", error);
+          const storePermission = permissions();
+          storePermission.setLoading(false);
+        }
+      })();
 
       // 4️⃣ Auto-refresh de token (30s antes de expirar)
       const timestampExpired = keycloak.tokenParsed?.exp || 0;

@@ -13,46 +13,51 @@
   >
     <ProfileBox :hovering="!isRail()" />
 
-    <!-- <SubheaderGroup name="Geral" :rail="isRail()">
+    <!-- MÓDULO IMPORTAÇÃO -->
+    <SubheaderGroup name="Importação" :rail="isRail()">
       <MenuItemSidebar
-        icon="solar:chart-broken"
-        name="Dashboard"
+        icon="mdi-cloud-download"
+        name="Dados para Importação"
         :rail="isRail()"
-        to="/dashboard"
-      />
-    </SubheaderGroup> -->
-
-    <SubheaderGroup :name="$t('relatorios')" :rail="isRail()">
-      <MenuItemSidebar
-        icon="solar:chart-square-broken"
-        :name="$t('dados')"
-        :rail="isRail()"
-        to="/relatorios/dados"
-        v-if="vCanPermission('relatorios-dados#list')"
-      />
-      <MenuItemSidebar
-        icon="solar:document-add-broken"
-        :name="$t('notas')"
-        :rail="isRail()"
-        to="/relatorios/notas"
-        v-if="vCanPermission('relatorios-notas#list')"
-      />
-      <MenuItemSidebar
-        icon="solar:money-bag-broken"
-        :name="$t('valores-possiveis')"
-        :rail="isRail()"
-        to="/relatorios/valores-possiveis"
-        v-if="vCanPermission('relatorios-valores-possiveis#list')"
-      />
-      <MenuItemSidebar
-        icon="solar:documents-broken"
-        :name="$t('final')"
-        :rail="isRail()"
-        to="/relatorios/final"
-        v-if="vCanPermission('relatorios-final#list')"
+        to="/importacao"
       />
     </SubheaderGroup>
 
+    <!-- MÓDULO COLABORADORES -->
+    <SubheaderGroup name="Colaboradores" :rail="isRail()">
+      <MenuItemSidebar
+        icon="mdi-account-multiple"
+        name="Listagem"
+        :rail="isRail()"
+        to="/colaboradores"
+      />
+    </SubheaderGroup>
+
+    <!-- MÓDULO PROCESSOS -->
+    <SubheaderGroup name="Processos" :rail="isRail()">
+      <MenuItemSidebar
+        icon="mdi-cog"
+        name="Processos"
+        :rail="isRail()"
+        to="/processos"
+      />
+      <MenuItemSidebar
+        icon="mdi-history"
+        name="Histórico"
+        :rail="isRail()"
+        to="/processos/historico"
+      />
+    </SubheaderGroup>
+
+    <!-- MÓDULO RELATÓRIOS -->
+    <SubheaderGroup name="Relatórios" :rail="isRail()">
+      <MenuItemSidebar
+        icon="mdi-chart-box-outline"
+        name="Relatórios"
+        :rail="isRail()"
+        to="/relatorios"
+      />
+    </SubheaderGroup>
   </v-navigation-drawer>
 </template>
 
@@ -62,7 +67,6 @@ import ProfileBox from "@/layouts/sidebar-navigation/side-bar/profile-box/index.
 import vuetify from "@/plugins/vuetify";
 import { ref } from "vue";
 import SubheaderGroup from "./SubheaderGroup.vue";
-import { vCanPermission } from "@/support/directives/can";
 
 const hovering = ref(vuetify.display.mobile.value);
 

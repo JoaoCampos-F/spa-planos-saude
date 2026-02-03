@@ -6,6 +6,7 @@ type Permissions = {
   };
   roles: Array<string>;
   rolesSystem: Array<string>;
+  loading: boolean;
 };
 
 export const permissions = defineStore("permissionStore", {
@@ -14,6 +15,7 @@ export const permissions = defineStore("permissionStore", {
       permissions: {},
       roles: [],
       rolesSystem: ["ADMIN", "DP", "COLABORADOR"],
+      loading: true, // Inicia como loading
     };
   },
 
@@ -22,6 +24,9 @@ export const permissions = defineStore("permissionStore", {
       this.permissions = data.permissions;
       this.roles = data.roles;
     },
+    setLoading(loading: boolean) {
+      this.loading = loading;
+    },
   },
   getters: {
     getState(state): Permissions {
@@ -29,6 +34,7 @@ export const permissions = defineStore("permissionStore", {
         permissions: state.permissions,
         roles: state.roles,
         rolesSystem: state.rolesSystem,
+        loading: state.loading,
       };
     },
     getRoles(state): Array<string> {
@@ -39,6 +45,9 @@ export const permissions = defineStore("permissionStore", {
     },
     getPermissions(state) {
       return state.permissions;
+    },
+    isLoading(state): boolean {
+      return state.loading;
     },
   },
 });

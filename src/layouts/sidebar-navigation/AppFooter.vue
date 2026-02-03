@@ -15,29 +15,16 @@
       class="text-caption text-disabled"
       style="position: absolute; right: 16px"
     >
-      &copy; {{ new Date().getFullYear() }}
+      {{ new Date().getFullYear() }}
       <span class="d-none d-sm-inline-block">Grupo Cometa</span>
-      —
-      <a
-        class="text-decoration-none on-surface"
-        href="#"
-        rel="noopener noreferrer"
-      >
-        PPLR
-        <v-tooltip activator="parent" location="top"> PPLR </v-tooltip>
-      </a>
+      — Planos de Saúde
+      <v-tooltip activator="parent" location="top"> PPLR </v-tooltip>
     </div>
   </v-footer>
 </template>
 
 <script setup lang="ts">
-const items = [
-  {
-    title: "Grupo Cometa",
-    icon: "mdi-web-box",
-    href: "#",
-  },
-];
+const items: Array<any> = [];
 </script>
 
 <style scoped lang="sass">
