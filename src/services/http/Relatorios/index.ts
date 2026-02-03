@@ -75,13 +75,11 @@ export default class RelatoriosHttp extends BaseHttp<Blob> {
    */
   abrirPdfNovaAba(blob: Blob, nomeArquivo: string) {
     const url = window.URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.target = "_blank";
-    link.download = nomeArquivo;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    window.URL.revokeObjectURL(url);
+    window.open(url, "_blank");
+
+    // Libera a URL após um delay para garantir que a janela abriu
+    setTimeout(() => {
+      window.URL.revokeObjectURL(url);
+    }, 100);
   }
 }
