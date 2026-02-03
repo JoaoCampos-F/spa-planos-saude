@@ -1,4 +1,8 @@
 import BaseHttp from "../BaseHttp";
+import type {
+  EmpresaCompleta,
+  ApiResponseEmpresas,
+} from "@/interfaces/api.interfaces";
 
 export interface EmpresaUnimedResponse {
   codEmpresa: number;
@@ -15,12 +19,20 @@ export interface BuscarEmpresasResponse {
   timestamp: string;
 }
 
-export default class EmpresasHttp extends BaseHttp<BuscarEmpresasResponse> {
+export default class EmpresasHttp extends BaseHttp<ApiResponseEmpresas> {
   resource(): string {
-    return "/importacao/empresas-unimed";
+    return "/importacao";
   }
 
   async buscarEmpresasUnimed() {
-    return this.http.get<BuscarEmpresasResponse>(this.resource());
+    return this.http.get<BuscarEmpresasResponse>(
+      `${this.resource()}/empresas-unimed`,
+    );
+  }
+
+  async listarEmpresas() {
+    return this.http.get<ApiResponseEmpresas>(
+      `${this.resource()}/listar-empresas`,
+    );
   }
 }

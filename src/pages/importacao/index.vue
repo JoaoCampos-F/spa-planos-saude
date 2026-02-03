@@ -33,7 +33,6 @@
         </v-card>
       </v-col>
 
-      <!-- ========== CARD EXPORTAÇÃO ========== -->
       <v-col cols="12" md="6">
         <v-card elevation="2" class="h-100 d-flex flex-column">
           <v-card-title class="bg-success">
@@ -71,7 +70,7 @@
         <v-card-title
           class="bg-primary d-flex justify-space-between align-center"
         >
-          <span>📥 Processamento de Importação</span>
+          <span>Processamento de Importação</span>
           <v-btn
             icon
             variant="text"
@@ -178,7 +177,7 @@
         <v-card-title
           class="bg-success d-flex justify-space-between align-center"
         >
-          <span>📤 Processamento de Exportação</span>
+          <span>Processamento de Exportação</span>
           <v-btn
             icon
             variant="text"
@@ -456,7 +455,7 @@ async function executarImportacao() {
   try {
     logsImportacao.value.push({
       tipo: "info",
-      mensagem: "📥 Iniciando importação...",
+      mensagem: "Iniciando importação...",
     });
 
     const response = await importacaoHttp.importarPeriodoCompleto({
@@ -472,17 +471,17 @@ async function executarImportacao() {
 
     logsImportacao.value.push({
       tipo: "sucesso",
-      mensagem: `✅ CNPJ: ${resultado.resumo.cnpj?.totalImportado || 0} registros importados`,
+      mensagem: `CNPJ: ${resultado.resumo.cnpj?.totalImportado || 0} registros importados`,
     });
 
     logsImportacao.value.push({
       tipo: "sucesso",
-      mensagem: `✅ Contrato: ${resultado.resumo.contrato?.totalImportado || 0} registros importados`,
+      mensagem: `Contrato: ${resultado.resumo.contrato?.totalImportado || 0} registros importados`,
     });
 
     logsImportacao.value.push({
       tipo: "sucesso",
-      mensagem: `🎉 Total: ${resultado.resumo.totalGeral || 0} registros importados com sucesso!`,
+      mensagem: `Total: ${resultado.resumo.totalGeral || 0} registros importados com sucesso!`,
     });
 
     const erros = [
@@ -491,12 +490,12 @@ async function executarImportacao() {
     ];
 
     erros.forEach((erro) => {
-      logsImportacao.value.push({ tipo: "erro", mensagem: `⚠️ ${erro}` });
+      logsImportacao.value.push({ tipo: "erro", mensagem: erro });
     });
   } catch (error: any) {
     logsImportacao.value.push({
       tipo: "erro",
-      mensagem: `❌ Erro: ${error.response?.data?.message || error.message}`,
+      mensagem: `Erro: ${error.response?.data?.message || error.message}`,
     });
   } finally {
     carregandoImportacao.value = false;
@@ -521,7 +520,7 @@ async function executarExportacao() {
   try {
     logsExportacao.value.push({
       tipo: "info",
-      mensagem: "📤 Iniciando exportação para Totvs...",
+      mensagem: "Iniciando exportação para Totvs...",
     });
 
     // TODO: Implementar chamada API de exportação
@@ -529,12 +528,12 @@ async function executarExportacao() {
 
     logsExportacao.value.push({
       tipo: "sucesso",
-      mensagem: "✅ Exportação concluída com sucesso!",
+      mensagem: "Exportação concluída com sucesso!",
     });
   } catch (error: any) {
     logsExportacao.value.push({
       tipo: "erro",
-      mensagem: `❌ Erro: ${error.message}`,
+      mensagem: `Erro: ${error.message}`,
     });
   } finally {
     carregandoExportacao.value = false;

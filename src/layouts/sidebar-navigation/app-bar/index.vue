@@ -18,10 +18,6 @@
       <v-icon icon="solar:list-bold" size="22" />
     </v-btn>
 
-    <!-- <v-btn class="ma-1" density="comfortable" icon>
-      <v-icon icon="solar:magnifer-outline" size="21" />
-    </v-btn> -->
-
     <app-launcher />
 
     <v-toolbar-title class="d-flex justify-end mr-5">
@@ -41,10 +37,6 @@
       <v-btn class="ma-1" density="comfortable" icon disabled>
         <v-icon icon="solar:inbox-line-line-duotone" size="21" />
       </v-btn>
-
-      <!-- <v-btn class="ma-1" density="comfortable" icon>
-        <v-icon icon="solar:cart-large-line-duotone" size="21" />
-      </v-btn> -->
     </v-toolbar-title>
 
     <v-menu :close-on-back="true" :close-on-content-click="false" offset-y>
