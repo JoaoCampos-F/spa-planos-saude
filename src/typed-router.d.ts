@@ -30,30 +30,9 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
-    '/exportacao/': RouteRecordInfo<
-      '/exportacao/',
-      '/exportacao',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
     '/importacao/': RouteRecordInfo<
       '/importacao/',
       '/importacao',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/importacao/cnpj': RouteRecordInfo<
-      '/importacao/cnpj',
-      '/importacao/cnpj',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/importacao/contrato': RouteRecordInfo<
-      '/importacao/contrato',
-      '/importacao/contrato',
       Record<never, never>,
       Record<never, never>,
       | never
@@ -86,48 +65,6 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
-    '/relatorios/centro-custo': RouteRecordInfo<
-      '/relatorios/centro-custo',
-      '/relatorios/centro-custo',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/relatorios/colaborador': RouteRecordInfo<
-      '/relatorios/colaborador',
-      '/relatorios/colaborador',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/relatorios/empresa': RouteRecordInfo<
-      '/relatorios/empresa',
-      '/relatorios/empresa',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/relatorios/nao-pagamento': RouteRecordInfo<
-      '/relatorios/nao-pagamento',
-      '/relatorios/nao-pagamento',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/relatorios/pagamento': RouteRecordInfo<
-      '/relatorios/pagamento',
-      '/relatorios/pagamento',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/relatorios/resumo-depto': RouteRecordInfo<
-      '/relatorios/resumo-depto',
-      '/relatorios/resumo-depto',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
   }
 
   /**
@@ -147,27 +84,9 @@ declare module 'vue-router/auto-routes' {
       views:
         | never
     }
-    'src/pages/exportacao/index.vue': {
-      routes:
-        | '/exportacao/'
-      views:
-        | never
-    }
     'src/pages/importacao/index.vue': {
       routes:
         | '/importacao/'
-      views:
-        | never
-    }
-    'src/pages/importacao/cnpj.vue': {
-      routes:
-        | '/importacao/cnpj'
-      views:
-        | never
-    }
-    'src/pages/importacao/contrato.vue': {
-      routes:
-        | '/importacao/contrato'
       views:
         | never
     }
@@ -192,42 +111,6 @@ declare module 'vue-router/auto-routes' {
     'src/pages/relatorios/index.vue': {
       routes:
         | '/relatorios/'
-      views:
-        | never
-    }
-    'src/pages/relatorios/centro-custo.vue': {
-      routes:
-        | '/relatorios/centro-custo'
-      views:
-        | never
-    }
-    'src/pages/relatorios/colaborador.vue': {
-      routes:
-        | '/relatorios/colaborador'
-      views:
-        | never
-    }
-    'src/pages/relatorios/empresa.vue': {
-      routes:
-        | '/relatorios/empresa'
-      views:
-        | never
-    }
-    'src/pages/relatorios/nao-pagamento.vue': {
-      routes:
-        | '/relatorios/nao-pagamento'
-      views:
-        | never
-    }
-    'src/pages/relatorios/pagamento.vue': {
-      routes:
-        | '/relatorios/pagamento'
-      views:
-        | never
-    }
-    'src/pages/relatorios/resumo-depto.vue': {
-      routes:
-        | '/relatorios/resumo-depto'
       views:
         | never
     }
