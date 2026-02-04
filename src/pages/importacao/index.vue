@@ -177,7 +177,10 @@
         <v-card-title
           class="bg-success d-flex justify-space-between align-center"
         >
-          <span>Processamento de Exportação</span>
+          <span>
+            <v-icon class="mr-2">mdi-cloud-upload</v-icon>
+            Processamento de Exportação
+          </span>
           <v-btn
             icon
             variant="text"
@@ -190,108 +193,204 @@
         </v-card-title>
 
         <v-card-text class="pa-6">
-          <!-- Campos de Mês e Ano -->
-          <v-row>
-            <v-col cols="12" md="6">
+          <!-- Campos de Período e Filtros -->
+          <v-row v-if="!carregandoExportacao && logsExportacao.length === 0">
+            <v-col cols="12">
+              <v-alert type="info" variant="tonal" class="mb-4">
+                Selecione o período, bandeira, empresa e processos que deseja
+                executar
+              </v-alert>
+            </v-col>
+
+            <!-- Mês e Ano -->
+            <v-col cols="12" md="3">
               <v-select
                 v-model="mesExportacao"
                 :items="meses"
-                label="Mês"
+                label="Mês *"
                 item-title="nome"
                 item-value="valor"
                 variant="outlined"
                 density="comfortable"
+                @update:model-value="carregarProcessosExportacao"
               />
             </v-col>
-            <v-col cols="12" md="6">
+            <v-col cols="12" md="3">
               <v-select
                 v-model="anoExportacao"
                 :items="anos"
-                label="Ano"
+                label="Ano *"
                 variant="outlined"
                 density="comfortable"
+                @update:model-value="carregarProcessosExportacao"
               />
             </v-col>
-          </v-row>
 
-          <v-divider class="my-4" />
-
-          <!-- Filtros -->
-          <v-row>
-            <v-col cols="12" md="4">
+            <!-- Bandeira -->
+            <v-col cols="12" md="6">
               <v-select
-                v-model="filtroSeguimento"
-                :items="seguimentos"
-                label="Seguimento"
+                v-model="filtroBandeira"
+                :items="bandeiras"
+                label="Bandeira *"
                 item-title="nome"
-                item-value="id"
+                item-value="codigo"
                 variant="outlined"
                 density="comfortable"
-                clearable
-              />
+                @update:model-value="onBandeiraChange"
+              >
+                <template #item="{ props, item }">
+                  <v-list-item v-bind="props" :title="item.raw.nome">
+                    <template #prepend>
+                      <v-chip :color="item.raw.cor" size="x-small" class="mr-2">
+                        {{ item.raw.codigo }}
+                      </v-chip>
+                    </template>
+                  </v-list-item>
+                </template>
+              </v-select>
             </v-col>
-            <v-col cols="12" md="4">
+
+            <!-- Empresa -->
+            <v-col cols="12" md="6">
               <v-select
                 v-model="filtroEmpresa"
-                :items="empresasDisponiveis"
+                :items="empresasFiltradas"
                 :loading="carregandoEmpresas"
-                label="Empresa"
+                :disabled="!filtroBandeira"
+                label="Empresa *"
                 item-title="label"
-                item-value="codEmpresa"
+                item-value="sigla"
                 variant="outlined"
                 density="comfortable"
                 clearable
+                @update:model-value="onEmpresaChangeExportacao"
+                hint="Selecione 'Todas' para exportar todas as empresas da bandeira"
+                persistent-hint
               />
             </v-col>
-            <v-col cols="12" md="4">
+
+            <!-- Colaborador -->
+            <v-col cols="12" md="6">
               <v-autocomplete
                 v-model="filtroColaborador"
-                :items="colaboradores"
-                label="Colaborador(a)"
-                item-title="nome"
-                item-value="id"
+                :items="colaboradoresExportacao"
+                :loading="carregandoColaboradores"
+                :disabled="filtroEmpresa === 'T'"
+                label="Colaborador (opcional)"
+                item-title="label"
+                item-value="cpf"
                 variant="outlined"
                 density="comfortable"
                 clearable
+                hint="Requer empresa específica (não funciona com 'Todas')"
+                persistent-hint
               />
             </v-col>
           </v-row>
 
-          <v-divider class="my-4" />
+          <v-divider class="my-4" v-if="logsExportacao.length === 0" />
 
-          <!-- Processos Unimed -->
-          <div class="mb-4">
-            <h3 class="text-h6 mb-3">-----------Unimed-----------</h3>
-            <v-checkbox
-              v-model="processoSelecionado"
-              label="Exporta Unimed para Folha"
-              value="exporta_unimed_folha"
-              density="comfortable"
-              hide-details
-            />
+          <!-- Lista de Processos -->
+          <div v-if="!carregandoExportacao && logsExportacao.length === 0">
+            <div v-if="carregandoProcessos" class="text-center py-8">
+              <v-progress-circular indeterminate color="success" size="48" />
+              <p class="text-body-2 text-grey-darken-1 mt-4">
+                Carregando processos disponíveis...
+              </p>
+            </div>
+
+            <div v-else-if="processosExportacao.length === 0" class="py-4">
+              <v-alert type="warning" variant="tonal">
+                Nenhum processo disponível. Selecione mês, ano e bandeira para
+                carregar os processos.
+              </v-alert>
+            </div>
+
+            <div v-else>
+              <h3 class="text-h6 mb-3">
+                Processos Disponíveis
+                <v-chip size="small" color="info" class="ml-2">
+                  {{ processosExportacao.length }}
+                </v-chip>
+              </h3>
+
+              <v-list density="compact" class="mb-4">
+                <v-list-item
+                  v-for="processo in processosExportacao"
+                  :key="processo.codigo"
+                  class="processo-item"
+                >
+                  <template #prepend>
+                    <v-radio-group
+                      v-model="processoSelecionado"
+                      hide-details
+                      density="compact"
+                    >
+                      <v-radio :value="processo.codigo" density="compact" />
+                    </v-radio-group>
+                  </template>
+
+                  <v-list-item-title class="font-weight-medium">
+                    {{ processo.descricao }}
+                  </v-list-item-title>
+
+                  <v-list-item-subtitle>
+                    <v-chip
+                      v-if="processo.dataUltimaExecucao"
+                      size="x-small"
+                      color="info"
+                      variant="flat"
+                      class="mr-2"
+                    >
+                      <v-icon start size="x-small">mdi-clock-outline</v-icon>
+                      {{ processo.dataUltimaExecucao }}
+                      {{ processo.usuario ? `(${processo.usuario})` : "" }}
+                    </v-chip>
+                    <v-chip v-else size="x-small" color="grey" variant="flat">
+                      <v-icon start size="x-small">mdi-clock-outline</v-icon>
+                      Nunca executado
+                    </v-chip>
+                  </v-list-item-subtitle>
+
+                  <template #append>
+                    <v-btn
+                      icon="mdi-eye"
+                      size="x-small"
+                      variant="text"
+                      color="warning"
+                      @click="verHistoricoProcesso(processo.codigo)"
+                      title="Ver histórico"
+                    />
+                  </template>
+                </v-list-item>
+              </v-list>
+
+              <v-divider class="my-4" />
+
+              <!-- Opções de Execução -->
+              <v-row>
+                <v-col cols="12" md="6">
+                  <v-checkbox
+                    v-model="previa"
+                    label="Gerar Prévia (não confirma no TOTVS)"
+                    hint="Útil para validar antes da exportação definitiva"
+                    persistent-hint
+                    density="comfortable"
+                  />
+                </v-col>
+                <v-col cols="12" md="6">
+                  <v-checkbox
+                    v-model="apagarDados"
+                    label="Apagar dados antigos antes de exportar"
+                    hint="⚠️ Requer permissão ADMIN"
+                    persistent-hint
+                    density="comfortable"
+                    color="error"
+                  />
+                </v-col>
+              </v-row>
+            </div>
           </div>
-
-          <v-divider class="my-4" />
-
-          <!-- Outras Opções -->
-          <v-row>
-            <v-col cols="12" md="6">
-              <v-checkbox
-                v-model="previa"
-                label="Prévia"
-                density="comfortable"
-                hide-details
-              />
-            </v-col>
-            <v-col cols="12" md="6">
-              <v-checkbox
-                v-model="apagarDados"
-                label="Apagar Dados"
-                density="comfortable"
-                hide-details
-              />
-            </v-col>
-          </v-row>
 
           <!-- Logs de Exportação -->
           <v-timeline
@@ -324,15 +423,23 @@
             @click="fecharModalExportacao"
             :disabled="carregandoExportacao"
           >
-            Sair
+            {{ logsExportacao.length > 0 ? "Fechar" : "Cancelar" }}
           </v-btn>
           <v-btn
+            v-if="logsExportacao.length === 0"
             color="success"
             :loading="carregandoExportacao"
+            :disabled="
+              !processoSelecionado ||
+              !filtroEmpresa ||
+              !filtroBandeira ||
+              !mesExportacao ||
+              !anoExportacao
+            "
             @click="executarExportacao"
           >
-            <v-icon left>mdi-content-save</v-icon>
-            Salvar Dados
+            <v-icon left>mdi-cloud-upload</v-icon>
+            Exportar para TOTVS
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -344,9 +451,14 @@
 import { ref, computed, onMounted } from "vue";
 import ImportacaoHttp from "@/services/http/Importacao";
 import EmpresasHttp from "@/services/http/Empresas";
+import ColaboradoresHttp from "@/services/http/Colaboradores";
+import ExportacaoHttp from "@/services/http/Exportacao";
+import type { ProcessoParaExportacao } from "@/services/http/Exportacao";
 
 const importacaoHttp = new ImportacaoHttp();
 const empresasHttp = new EmpresasHttp();
+const colaboradoresHttp = new ColaboradoresHttp();
+const exportacaoHttp = new ExportacaoHttp();
 
 // ========== DADOS IMPORTAÇÃO ==========
 const mesImportacao = ref("02");
@@ -362,19 +474,23 @@ const carregandoExportacao = ref(false);
 const modalExportacao = ref(false);
 const logsExportacao = ref<Array<{ tipo: string; mensagem: string }>>([]);
 
-// Filtros
-const filtroSeguimento = ref(null);
-const filtroEmpresa = ref(null);
-const filtroColaborador = ref(null);
+// Filtros Exportação
+const filtroBandeira = ref<string | null>(null);
+const filtroEmpresa = ref<string | null>(null);
+const filtroColaborador = ref<string | null>(null);
 
-// Processo e opções
-const processoSelecionado = ref<string[]>([]);
+// Processos e opções (UM processo por vez via radio button)
+const processosExportacao = ref<ProcessoParaExportacao[]>([]);
+const processoSelecionado = ref<string | null>(null);
+const carregandoProcessos = ref(false);
 const previa = ref(false);
 const apagarDados = ref(false);
 
 // ========== DADOS DA API ==========
 const empresas = ref<any[]>([]);
 const carregandoEmpresas = ref(false);
+const colaboradoresExportacao = ref<any[]>([]);
+const carregandoColaboradores = ref(false);
 
 // ========== DADOS COMPARTILHADOS ==========
 const meses = [
@@ -397,23 +513,35 @@ const anos = computed(() => {
   return Array.from({ length: 5 }, (_, i) => String(anoAtual - i));
 });
 
-// Dados para dropdowns
-const seguimentos = ref([
-  { id: "todos", nome: "Todas" },
-  { id: "administrativo", nome: "Administrativo" },
-  { id: "operacional", nome: "Operacional" },
-]);
+// Bandeiras disponíveis (replicando npd-legacy)
+const bandeiras = [
+  { codigo: "U", nome: "Unimed", cor: "green" },
+  { codigo: "G", nome: "GSV", cor: "blue" },
+  { codigo: "S", nome: "SAN", cor: "orange" },
+];
 
-const colaboradores = ref([{ id: "todos", nome: "Todos" }]);
+// Empresas filtradas por bandeira + opção "Todas"
+const empresasFiltradas = computed(() => {
+  if (!filtroBandeira.value || empresas.value.length === 0) {
+    return [{ sigla: "T", label: "Todas as empresas" }];
+  }
 
-const empresasDisponiveis = computed(() => {
-  if (empresas.value.length === 0) return [];
+  // Filtrar empresas pela bandeira selecionada
+  const empresasDaBandeira = empresas.value.filter((emp) => {
+    // Mapear codBand para letra da bandeira
+    const bandeiraCod = emp.codBand?.toString();
+    if (filtroBandeira.value === "U") return bandeiraCod === "3"; // Unimed
+    if (filtroBandeira.value === "G") return bandeiraCod === "1"; // GSV
+    if (filtroBandeira.value === "S") return bandeiraCod === "2"; // SAN
+    return false;
+  });
 
   return [
-    { codEmpresa: null, label: "Todas" },
-    ...empresas.value.map((emp) => ({
+    { sigla: "T", label: "Todas as empresas" },
+    ...empresasDaBandeira.map((emp) => ({
       ...emp,
-      label: `${emp.codEmpresa} - ${emp.cnpj}`,
+      sigla: emp.apelido || emp.codEmpresa.toString(),
+      label: `${emp.apelido || emp.codEmpresa} - ${emp.cnpj}`,
     })),
   ];
 });
@@ -427,13 +555,110 @@ onMounted(() => {
 async function carregarEmpresas() {
   carregandoEmpresas.value = true;
   try {
-    const response = await empresasHttp.buscarEmpresasUnimed();
+    const response = await empresasHttp.listarEmpresas();
     empresas.value = response.data.dados || [];
   } catch (error: any) {
     console.error("Erro ao carregar empresas:", error);
   } finally {
     carregandoEmpresas.value = false;
   }
+}
+
+async function carregarColaboradores() {
+  // Só carrega se tiver empresa específica selecionada (não "T")
+  if (!filtroEmpresa.value || filtroEmpresa.value === "T") {
+    colaboradoresExportacao.value = [];
+    filtroColaborador.value = null;
+    return;
+  }
+
+  // Buscar empresa real pelos dados
+  const empresaReal = empresasFiltradas.value.find(
+    (e) => e.sigla === filtroEmpresa.value,
+  );
+
+  if (!empresaReal || !empresaReal.codEmpresa) {
+    colaboradoresExportacao.value = [];
+    return;
+  }
+
+  carregandoColaboradores.value = true;
+  try {
+    const response = await colaboradoresHttp.listarColaboradores(
+      Number(empresaReal.codEmpresa),
+      empresaReal.codColigada,
+    );
+
+    colaboradoresExportacao.value = (response.data.dados || []).map(
+      (colab: any) => ({
+        ...colab,
+        label: `${colab.nome} - ${colab.cpf}`,
+      }),
+    );
+  } catch (error: any) {
+    console.error("Erro ao carregar colaboradores:", error);
+    colaboradoresExportacao.value = [];
+  } finally {
+    carregandoColaboradores.value = false;
+  }
+}
+
+async function carregarProcessosExportacao() {
+  if (!filtroBandeira.value || !mesExportacao.value || !anoExportacao.value) {
+    processosExportacao.value = [];
+    return;
+  }
+
+  carregandoProcessos.value = true;
+  processoSelecionado.value = null;
+
+  try {
+    // Mapear bandeira para categoria
+    let categoria = "UNI"; // Padrão Unimed
+    if (filtroBandeira.value === "G") categoria = "GSV";
+    if (filtroBandeira.value === "S") categoria = "SAN";
+
+    const response = await exportacaoHttp.listarProcessos({
+      categoria,
+      tipoDado: "C",
+      mesRef: parseInt(mesExportacao.value),
+      anoRef: parseInt(anoExportacao.value),
+    });
+
+    processosExportacao.value = response.data || [];
+  } catch (error: any) {
+    console.error("Erro ao carregar processos:", error);
+    processosExportacao.value = [];
+  } finally {
+    carregandoProcessos.value = false;
+  }
+}
+
+function onBandeiraChange() {
+  // Resetar filtros ao mudar bandeira
+  filtroEmpresa.value = null;
+  filtroColaborador.value = null;
+  colaboradoresExportacao.value = [];
+  processosExportacao.value = [];
+  processoSelecionado.value = null;
+
+  if (filtroBandeira.value) {
+    carregarProcessosExportacao();
+  }
+}
+
+function onEmpresaChangeExportacao() {
+  filtroColaborador.value = null;
+  colaboradoresExportacao.value = [];
+
+  if (filtroEmpresa.value && filtroEmpresa.value !== "T") {
+    carregarColaboradores();
+  }
+}
+
+function verHistoricoProcesso(codigoProcesso: string) {
+  // TODO: Implementar modal de histórico
+  console.log("Ver histórico do processo:", codigoProcesso);
 }
 
 // ========== FUNÇÕES IMPORTAÇÃO ==========
@@ -502,6 +727,7 @@ async function executarImportacao() {
   }
 }
 
+// ========== FUNÇÕES EXPORTAÇÃO ==========
 function abrirModalExportacao() {
   modalExportacao.value = true;
   logsExportacao.value = [];
@@ -510,30 +736,87 @@ function abrirModalExportacao() {
 function fecharModalExportacao() {
   if (!carregandoExportacao.value) {
     modalExportacao.value = false;
+    logsExportacao.value = [];
+    // Resetar estado
+    filtroBandeira.value = null;
+    filtroEmpresa.value = null;
+    filtroColaborador.value = null;
+    processosExportacao.value = [];
+    processoSelecionado.value = null;
+    previa.value = false;
+    apagarDados.value = false;
   }
 }
 
 async function executarExportacao() {
+  if (!processoSelecionado.value) {
+    logsExportacao.value.push({
+      tipo: "erro",
+      mensagem: "Selecione um processo para exportar",
+    });
+    return;
+  }
+
+  if (!filtroBandeira.value || !filtroEmpresa.value) {
+    logsExportacao.value.push({
+      tipo: "erro",
+      mensagem: "Selecione bandeira e empresa",
+    });
+    return;
+  }
+
   carregandoExportacao.value = true;
   logsExportacao.value = [];
 
   try {
     logsExportacao.value.push({
       tipo: "info",
-      mensagem: "Iniciando exportação para Totvs...",
+      mensagem: `Iniciando exportação para o TOTVS...`,
     });
 
-    // TODO: Implementar chamada API de exportação
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    const payload = {
+      mesRef: parseInt(mesExportacao.value),
+      anoRef: parseInt(anoExportacao.value),
+      codigoProcesso: processoSelecionado.value,
+      bandeira: filtroBandeira.value,
+      empresa: filtroEmpresa.value,
+      cpfColaborador: filtroColaborador.value || undefined,
+      previa: previa.value,
+      apagar: apagarDados.value,
+    };
 
-    logsExportacao.value.push({
-      tipo: "sucesso",
-      mensagem: "Exportação concluída com sucesso!",
-    });
+    const response = await exportacaoHttp.exportarParaTotvs(payload);
+    const resultado = response.data;
+
+    if (resultado.sucesso) {
+      logsExportacao.value.push({
+        tipo: "sucesso",
+        mensagem: resultado.mensagem || "Exportação concluída com sucesso!",
+      });
+
+      if (resultado.totalExportado > 0) {
+        logsExportacao.value.push({
+          tipo: "info",
+          mensagem: `Total exportado: ${resultado.totalExportado} registros`,
+        });
+      }
+    } else {
+      logsExportacao.value.push({
+        tipo: "erro",
+        mensagem: resultado.mensagem || "Erro na exportação",
+      });
+    }
+
+    if (resultado.erros && resultado.erros.length > 0) {
+      resultado.erros.forEach((erro: string) => {
+        logsExportacao.value.push({ tipo: "erro", mensagem: erro });
+      });
+    }
   } catch (error: any) {
+    console.error("Erro ao exportar:", error);
     logsExportacao.value.push({
       tipo: "erro",
-      mensagem: `Erro: ${error.message}`,
+      mensagem: `Erro: ${error.response?.data?.message || error.message}`,
     });
   } finally {
     carregandoExportacao.value = false;
@@ -544,5 +827,17 @@ async function executarExportacao() {
 <style scoped>
 .h-100 {
   height: 100%;
+}
+
+.processo-item {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.processo-item:last-child {
+  border-bottom: none;
+}
+
+.processo-item:hover {
+  background-color: rgba(0, 0, 0, 0.02);
 }
 </style>

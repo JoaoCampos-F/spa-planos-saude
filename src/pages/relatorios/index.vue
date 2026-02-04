@@ -3,13 +3,12 @@
     <!-- Formulário de Parâmetros -->
     <v-card elevation="2" class="mb-6">
       <v-card-title class="bg-primary text-white">
-        <v-icon class="mr-2">mdi-filter</v-icon>
         Parâmetros dos Relatórios
       </v-card-title>
 
       <v-card-text class="pa-6">
         <v-row>
-          <v-col cols="12" md="3">
+          <v-col cols="12" md="2">
             <v-autocomplete
               v-model="parametros.codEmpresa"
               :items="empresas"
@@ -25,7 +24,7 @@
             />
           </v-col>
 
-          <v-col cols="12" md="3">
+          <v-col cols="12" md="2">
             <v-select
               v-model="parametros.codContrato"
               :items="contratos"
@@ -40,7 +39,7 @@
             />
           </v-col>
 
-          <v-col cols="12" md="3">
+          <v-col cols="12" md="4">
             <v-autocomplete
               v-model="parametros.cpf"
               :items="colaboradores"
@@ -68,7 +67,7 @@
             />
           </v-col>
 
-          <v-col cols="12" md="1">
+          <v-col cols="12" md="2">
             <v-select
               v-model="parametros.anoRef"
               :items="anos"

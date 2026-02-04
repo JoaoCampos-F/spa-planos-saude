@@ -35,12 +35,6 @@ const router = createRouter({
           meta: { requiresAuth: true, roles: ["ADMIN", "DP"] },
         },
         {
-          path: "/processos",
-          name: "PageProcessos",
-          component: PageProcessos,
-          meta: { requiresAuth: true, roles: ["ADMIN", "DP"] },
-        },
-        {
           path: "/processos/historico",
           name: "PageProcessosHistorico",
           component: PageProcessosHistorico,
@@ -131,7 +125,6 @@ router.beforeEach((to, from, next) => {
 router.onError((err: any, to: any) => {
   if (err?.message?.includes?.("Failed to fetch dynamically imported module")) {
     if (!localStorage.getItem("vuetify:dynamic-reload")) {
-      console.log("Reloading page to fix dynamic import error");
       localStorage.setItem("vuetify:dynamic-reload", "true");
       location.assign(to.fullPath);
     } else {

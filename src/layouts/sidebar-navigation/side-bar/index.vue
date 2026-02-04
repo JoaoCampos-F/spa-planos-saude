@@ -14,43 +14,28 @@
     <ProfileBox :hovering="!isRail()" />
 
     <!-- MÓDULO IMPORTAÇÃO -->
-    <SubheaderGroup name="Importação" :rail="isRail()">
+    <SubheaderGroup name="módulos" :rail="isRail()">
       <MenuItemSidebar
         icon="mdi-cloud-download"
         name="Dados para Importação"
         :rail="isRail()"
         to="/importacao"
       />
-    </SubheaderGroup>
 
-    <!-- MÓDULO COLABORADORES -->
-    <SubheaderGroup name="Colaboradores" :rail="isRail()">
       <MenuItemSidebar
         icon="mdi-account-multiple"
-        name="Listagem"
+        name="Colaboradores"
         :rail="isRail()"
         to="/colaboradores"
       />
-    </SubheaderGroup>
 
-    <!-- MÓDULO PROCESSOS -->
-    <SubheaderGroup name="Processos" :rail="isRail()">
-      <MenuItemSidebar
-        icon="mdi-cog"
-        name="Processos"
-        :rail="isRail()"
-        to="/processos"
-      />
       <MenuItemSidebar
         icon="mdi-history"
         name="Histórico"
         :rail="isRail()"
         to="/processos/historico"
       />
-    </SubheaderGroup>
 
-    <!-- MÓDULO RELATÓRIOS -->
-    <SubheaderGroup name="Relatórios" :rail="isRail()">
       <MenuItemSidebar
         icon="mdi-chart-box-outline"
         name="Relatórios"

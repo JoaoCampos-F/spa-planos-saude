@@ -1,13 +1,14 @@
 import BaseHttp from "../BaseHttp";
 
 export interface ExportarTotvsParams {
-  codEmpresa: number;
-  codColigada: number;
-  mesRef: string;
-  anoRef: string;
-  bandeira?: string;
-  cpfColaborador?: string;
-  processos: string[]; // ['P_MCW_FECHA_COMISSAO_GLOBAL']
+  mesRef: number;
+  anoRef: number;
+  codigoProcesso: string; // Código do processo MCW (ex: '90000001') - UM processo por vez
+  bandeira?: string; // Código da bandeira (ex: 'U' = Unimed, 'G' = GSV, 'S' = SAN)
+  empresa?: string; // Sigla da empresa (ex: 'AF', 'BM') ou 'T' para todas da bandeira
+  cpfColaborador?: string; // CPF do colaborador específico (requer empresa específica)
+  previa?: boolean; // true = Gerar prévia, false = Definitivo
+  apagar?: boolean; // true = Apagar dados antigos (requer permissão ADMIN)
 }
 
 export interface ExportacaoResponse {
@@ -19,10 +20,16 @@ export interface ExportacaoResponse {
 
 export interface ProcessoParaExportacao {
   codigo: string;
-  nome: string;
+  categoria: string;
+  procedure: string;
   descricao: string;
-  dataUltimaExecucao?: string;
-  obrigatorio: boolean;
+  ordem: number;
+  dias: number;
+  usuario: string;
+  tipoEmpresa: string;
+  tipoDado: string;
+  ativo: string;
+  dataUltimaExecucao: string | null;
 }
 
 export default class ExportacaoHttp extends BaseHttp<ExportacaoResponse> {
@@ -45,8 +52,13 @@ export default class ExportacaoHttp extends BaseHttp<ExportacaoResponse> {
    * GET /exportacao/processos
    * Lista processos disponíveis para exportação (com última execução)
    */
-  async listarProcessos(params?: any) {
-    return this.http.get<{ data: ProcessoParaExportacao[] }>(
+  async listarProcessos(params: {
+    categoria: string;
+    tipoDado: string;
+    mesRef: number;
+    anoRef: number;
+  }) {
+    return this.http.get<ProcessoParaExportacao[]>(
       `${this.resource()}/processos`,
       { params },
     );
