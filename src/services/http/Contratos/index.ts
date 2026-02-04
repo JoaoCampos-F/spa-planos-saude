@@ -9,7 +9,9 @@ export default class ContratosHttp extends BaseHttp<ApiResponseContratos> {
     return "/common/contratos";
   }
 
-  async listarContratos() {
-    return this.http.get<ApiResponseContratos>(this.resource());
+  async listarContratos(codEmpresa?: number) {
+    return this.http.get<ApiResponseContratos>(this.resource(), {
+      params: codEmpresa ? { codEmpresa } : {},
+    });
   }
 }

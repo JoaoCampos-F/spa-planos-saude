@@ -380,10 +380,10 @@ async function carregarEmpresas() {
   }
 }
 
-async function carregarContratos() {
+async function carregarContratos(codEmpresa?: number) {
   carregandoContratos.value = true;
   try {
-    const response = await contratosHttp.listarContratos();
+    const response = await contratosHttp.listarContratos(codEmpresa);
     contratosData.value = response.data.dados || [];
   } catch (error: any) {
     mostrarErro("Erro ao carregar contratos");
@@ -394,11 +394,18 @@ async function carregarContratos() {
 }
 
 async function onEmpresaChange(codEmpresa: number | undefined) {
+  // Limpar dados dependentes
+  colaboradoresData.value = [];
+  contratosData.value = [];
+  parametros.value.codContrato = undefined;
+  parametros.value.cpf = undefined;
+
   if (!codEmpresa) {
-    colaboradoresData.value = [];
     parametros.value.codColigada = undefined;
     parametros.value.codFilial = undefined;
     parametros.value.codBand = undefined;
+    // Recarregar contratos sem filtro
+    await carregarContratos();
     return;
   }
 
@@ -408,7 +415,11 @@ async function onEmpresaChange(codEmpresa: number | undefined) {
     parametros.value.codFilial = empresa.codFilial;
     parametros.value.codBand = empresa.codBand;
 
-    await carregarColaboradores(codEmpresa, empresa.codColigada);
+    // Carregar contratos e colaboradores filtrados por empresa
+    await Promise.all([
+      carregarContratos(codEmpresa),
+      carregarColaboradores(codEmpresa, empresa.codColigada),
+    ]);
   }
 }
 
@@ -440,6 +451,9 @@ function limparParametros() {
     anoRef: "2026",
   };
   colaboradoresData.value = [];
+  contratosData.value = [];
+  // Recarregar contratos sem filtro
+  carregarContratos();
 }
 
 async function gerarRelatorio(tipo: string) {
