@@ -31,8 +31,6 @@ export default class EmpresasHttp extends BaseHttp<ApiResponseEmpresas> {
   }
 
   async listarEmpresas() {
-    return this.http.get<ApiResponseEmpresas>(
-      `${this.resource()}/listar-empresas`,
-    );
+    return this.http.get<ApiResponseEmpresas>("/common/empresas");
   }
 }

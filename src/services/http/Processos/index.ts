@@ -6,7 +6,7 @@ import type {
 
 export default class ProcessosHttp extends BaseHttp<ApiResponseProcessos> {
   resource(): string {
-    return "/importacao/listar-processos";
+    return "/common/processos";
   }
 
   async listarProcessos(categoria?: string) {

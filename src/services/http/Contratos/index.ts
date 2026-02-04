@@ -6,7 +6,7 @@ import type {
 
 export default class ContratosHttp extends BaseHttp<ApiResponseContratos> {
   resource(): string {
-    return "/importacao/listar-contratos";
+    return "/common/contratos";
   }
 
   async listarContratos() {

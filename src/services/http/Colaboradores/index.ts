@@ -6,7 +6,7 @@ import type {
 
 export default class ColaboradoresHttp extends BaseHttp<ApiResponseColaboradores> {
   resource(): string {
-    return "/importacao/listar-colaboradores";
+    return "/common/colaboradores";
   }
 
   async listarColaboradores(codEmpresa: number, codColigada: number) {

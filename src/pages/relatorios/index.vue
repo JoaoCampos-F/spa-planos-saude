@@ -10,7 +10,7 @@
       <v-card-text class="pa-6">
         <v-row>
           <v-col cols="12" md="3">
-            <v-select
+            <v-autocomplete
               v-model="parametros.codEmpresa"
               :items="empresas"
               :loading="carregandoEmpresas"
@@ -20,6 +20,7 @@
               variant="outlined"
               density="compact"
               clearable
+              hide-details
               @update:model-value="onEmpresaChange"
             />
           </v-col>
@@ -34,6 +35,7 @@
               item-value="contrato"
               variant="outlined"
               density="compact"
+              hide-details
               clearable
             />
           </v-col>
@@ -48,6 +50,7 @@
               item-value="cpf"
               variant="outlined"
               density="compact"
+              hide-details
               clearable
             />
           </v-col>
@@ -61,6 +64,7 @@
               item-value="valor"
               variant="outlined"
               density="compact"
+              hide-details
             />
           </v-col>
 
@@ -71,6 +75,7 @@
               label="Ano ref."
               variant="outlined"
               density="compact"
+              hide-details
             />
           </v-col>
         </v-row>
@@ -327,7 +332,7 @@ const empresas = computed(() => {
     { codEmpresa: undefined, label: "Todas" },
     ...empresasData.value.map((emp) => ({
       ...emp,
-      label: `${emp.apelido} (${emp.codEmpresa})`,
+      label: `${emp.apelido}`,
     })),
   ];
 });
@@ -356,7 +361,6 @@ const colaboradores = computed(() => {
   ];
 });
 
-// Lifecycle
 onMounted(() => {
   carregarEmpresas();
   carregarContratos();
