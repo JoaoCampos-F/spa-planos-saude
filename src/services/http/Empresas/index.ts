@@ -30,7 +30,8 @@ export default class EmpresasHttp extends BaseHttp<ApiResponseEmpresas> {
     );
   }
 
-  async listarEmpresas() {
-    return this.http.get<ApiResponseEmpresas>("/common/empresas");
+  async listarEmpresas(codBand?: number) {
+    const params = codBand ? `?codBand=${codBand}` : "";
+    return this.http.get<ApiResponseEmpresas>(`/common/empresas${params}`);
   }
 }

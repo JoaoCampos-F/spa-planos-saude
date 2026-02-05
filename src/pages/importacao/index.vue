@@ -195,19 +195,59 @@
         <v-card-text class="pa-6">
           <!-- Campos de Período e Filtros -->
           <v-row v-if="!carregandoExportacao && logsExportacao.length === 0">
-            <v-col cols="12">
-              <v-alert type="info" variant="tonal" class="mb-4">
-                Selecione o período, bandeira, empresa e processos que deseja
-                executar
-              </v-alert>
+            <!-- Seguimento (Bandeiras) - CORRIGIDO: Dropdown real -->
+            <v-col cols="12" md="4">
+              <v-select
+                v-model="filtroBandeira"
+                :items="bandeirasFiltradas"
+                :loading="carregandoBandeiras"
+                label="Seguimento"
+                item-title="descricao"
+                item-value="codBand"
+                variant="outlined"
+                density="comfortable"
+                @update:model-value="onBandeiraChange"
+              />
             </v-col>
 
-            <!-- Mês e Ano -->
-            <v-col cols="12" md="3">
+            <!-- Empresa (Filtrada por Bandeira) -->
+            <v-col cols="12" md="4">
+              <v-select
+                v-model="filtroEmpresa"
+                :items="empresasFiltradas"
+                :loading="carregandoEmpresas"
+                label="Empresa"
+                item-title="apelido"
+                item-value="codEmpresa"
+                variant="outlined"
+                density="comfortable"
+                clearable
+                @update:model-value="onEmpresaChangeExportacao"
+              />
+            </v-col>
+
+            <!-- Colaborador -->
+            <v-col cols="12" md="4">
+              <v-autocomplete
+                v-model="filtroColaborador"
+                :items="colaboradoresExportacao"
+                :loading="carregandoColaboradores"
+                :disabled="filtroEmpresa === 'T'"
+                label="Colaborador(a)"
+                item-title="label"
+                item-value="cpf"
+                variant="outlined"
+                density="comfortable"
+                clearable
+              />
+            </v-col>
+
+            <!-- Mês -->
+            <v-col cols="12" md="6">
               <v-select
                 v-model="mesExportacao"
                 :items="meses"
-                label="Mês *"
+                label="Mês"
                 item-title="nome"
                 item-value="valor"
                 variant="outlined"
@@ -215,80 +255,35 @@
                 @update:model-value="carregarProcessosExportacao"
               />
             </v-col>
-            <v-col cols="12" md="3">
+
+            <!-- Ano -->
+            <v-col cols="12" md="6">
               <v-select
                 v-model="anoExportacao"
                 :items="anos"
-                label="Ano *"
+                label="Ano"
                 variant="outlined"
                 density="comfortable"
                 @update:model-value="carregarProcessosExportacao"
               />
             </v-col>
-
-            <!-- Bandeira -->
-            <v-col cols="12" md="6">
-              <v-select
-                v-model="filtroBandeira"
-                :items="bandeiras"
-                label="Bandeira *"
-                item-title="nome"
-                item-value="codigo"
-                variant="outlined"
-                density="comfortable"
-                @update:model-value="onBandeiraChange"
-              >
-                <template #item="{ props, item }">
-                  <v-list-item v-bind="props" :title="item.raw.nome">
-                    <template #prepend>
-                      <v-chip :color="item.raw.cor" size="x-small" class="mr-2">
-                        {{ item.raw.codigo }}
-                      </v-chip>
-                    </template>
-                  </v-list-item>
-                </template>
-              </v-select>
-            </v-col>
-
-            <!-- Empresa -->
-            <v-col cols="12" md="6">
-              <v-select
-                v-model="filtroEmpresa"
-                :items="empresasFiltradas"
-                :loading="carregandoEmpresas"
-                :disabled="!filtroBandeira"
-                label="Empresa *"
-                item-title="label"
-                item-value="sigla"
-                variant="outlined"
-                density="comfortable"
-                clearable
-                @update:model-value="onEmpresaChangeExportacao"
-                hint="Selecione 'Todas' para exportar todas as empresas da bandeira"
-                persistent-hint
-              />
-            </v-col>
-
-            <!-- Colaborador -->
-            <v-col cols="12" md="6">
-              <v-autocomplete
-                v-model="filtroColaborador"
-                :items="colaboradoresExportacao"
-                :loading="carregandoColaboradores"
-                :disabled="filtroEmpresa === 'T'"
-                label="Colaborador (opcional)"
-                item-title="label"
-                item-value="cpf"
-                variant="outlined"
-                density="comfortable"
-                clearable
-                hint="Requer empresa específica (não funciona com 'Todas')"
-                persistent-hint
-              />
-            </v-col>
           </v-row>
 
+          <!-- Divisão para Processos -->
           <v-divider class="my-4" v-if="logsExportacao.length === 0" />
+
+          <!-- Título da seção de processos -->
+          <div
+            v-if="!carregandoExportacao && logsExportacao.length === 0"
+            class="mb-3"
+          >
+            <h4
+              class="text-h6"
+              style="border-bottom: 2px dashed #ddd; padding-bottom: 8px"
+            >
+              ----------------------- Unimed -----------------------
+            </h4>
+          </div>
 
           <!-- Lista de Processos -->
           <div v-if="!carregandoExportacao && logsExportacao.length === 0">
@@ -301,7 +296,7 @@
 
             <div v-else-if="processosExportacao.length === 0" class="py-4">
               <v-alert type="warning" variant="tonal">
-                Nenhum processo disponível. Selecione mês, ano e bandeira para
+                Nenhum processo disponível. Selecione mês, ano e empresa para
                 carregar os processos.
               </v-alert>
             </div>
@@ -321,13 +316,13 @@
                   class="processo-item"
                 >
                   <template #prepend>
-                    <v-radio-group
-                      v-model="processoSelecionado"
+                    <!-- ✅ CORRIGIDO: Checkboxes para seleção múltipla (como no npd-legacy) -->
+                    <v-checkbox
+                      v-model="processosSelecionados"
+                      :value="processo.codigo"
                       hide-details
                       density="compact"
-                    >
-                      <v-radio :value="processo.codigo" density="compact" />
-                    </v-radio-group>
+                    />
                   </template>
 
                   <v-list-item-title class="font-weight-medium">
@@ -423,23 +418,17 @@
             @click="fecharModalExportacao"
             :disabled="carregandoExportacao"
           >
-            {{ logsExportacao.length > 0 ? "Fechar" : "Cancelar" }}
+            {{ logsExportacao.length > 0 ? "Fechar" : "Sair" }}
           </v-btn>
           <v-btn
             v-if="logsExportacao.length === 0"
             color="success"
             :loading="carregandoExportacao"
-            :disabled="
-              !processoSelecionado ||
-              !filtroEmpresa ||
-              !filtroBandeira ||
-              !mesExportacao ||
-              !anoExportacao
-            "
+            :disabled="!podeExecutar"
             @click="executarExportacao"
           >
-            <v-icon left>mdi-cloud-upload</v-icon>
-            Exportar para TOTVS
+            <v-icon left>mdi-content-save</v-icon>
+            Salvar Dados
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -453,6 +442,7 @@ import ImportacaoHttp from "@/services/http/Importacao";
 import EmpresasHttp from "@/services/http/Empresas";
 import ColaboradoresHttp from "@/services/http/Colaboradores";
 import ExportacaoHttp from "@/services/http/Exportacao";
+import { bandeirasService, type TipoBandeira } from "@/services/http/Bandeiras";
 import type { ProcessoParaExportacao } from "@/services/http/Exportacao";
 
 const importacaoHttp = new ImportacaoHttp();
@@ -475,13 +465,18 @@ const modalExportacao = ref(false);
 const logsExportacao = ref<Array<{ tipo: string; mensagem: string }>>([]);
 
 // Filtros Exportação
-const filtroBandeira = ref<string | null>(null);
-const filtroEmpresa = ref<string | null>(null);
+const filtroBandeira = ref<number | "T" | null>("T"); // Todas as bandeiras por padrão
+const filtroEmpresa = ref<number | "T" | null>("T"); // Todas as empresas por padrão
 const filtroColaborador = ref<string | null>(null);
+
+// Dados das bandeiras
+const bandeiras = ref<TipoBandeira[]>([]);
+const carregandoBandeiras = ref(false);
 
 // Processos e opções (UM processo por vez via radio button)
 const processosExportacao = ref<ProcessoParaExportacao[]>([]);
-const processoSelecionado = ref<string | null>(null);
+// ✅ CORRIGIDO: Array para múltiplos processos (como npd-legacy)
+const processosSelecionados = ref<string[]>([]);
 const carregandoProcessos = ref(false);
 const previa = ref(false);
 const apagarDados = ref(false);
@@ -508,54 +503,73 @@ const meses = [
   { nome: "Dezembro", valor: "12" },
 ];
 
+// ========== COMPUTED ==========
 const anos = computed(() => {
   const anoAtual = new Date().getFullYear();
   return Array.from({ length: 5 }, (_, i) => String(anoAtual - i));
 });
 
-// Bandeiras disponíveis (replicando npd-legacy)
-const bandeiras = [
-  { codigo: "U", nome: "Unimed", cor: "green" },
-  { codigo: "G", nome: "GSV", cor: "blue" },
-  { codigo: "S", nome: "SAN", cor: "orange" },
-];
+// Bandeiras filtradas (com opção "Todas")
+const bandeirasFiltradas = computed(() => {
+  const opcoes = [{ codBand: "T", descricao: "Todas as bandeiras" }];
+  return [...opcoes, ...bandeiras.value];
+});
 
-// Empresas filtradas por bandeira + opção "Todas"
+// Empresas filtradas por bandeira selecionada
 const empresasFiltradas = computed(() => {
-  if (!filtroBandeira.value || empresas.value.length === 0) {
-    return [{ sigla: "T", label: "Todas as empresas" }];
+  const opcoes = [{ codEmpresa: "T", apelido: "Todas as empresas" }];
+
+  if (empresas.value.length === 0) {
+    return opcoes;
+  }
+
+  // Se bandeira = 'T', mostrar todas as empresas
+  if (filtroBandeira.value === "T") {
+    return [...opcoes, ...empresas.value];
   }
 
   // Filtrar empresas pela bandeira selecionada
-  const empresasDaBandeira = empresas.value.filter((emp) => {
-    // Mapear codBand para letra da bandeira
-    const bandeiraCod = emp.codBand?.toString();
-    if (filtroBandeira.value === "U") return bandeiraCod === "3"; // Unimed
-    if (filtroBandeira.value === "G") return bandeiraCod === "1"; // GSV
-    if (filtroBandeira.value === "S") return bandeiraCod === "2"; // SAN
-    return false;
-  });
+  const empresasFiltradasPorBandeira = empresas.value.filter(
+    (emp) => emp.codBand === filtroBandeira.value,
+  );
 
-  return [
-    { sigla: "T", label: "Todas as empresas" },
-    ...empresasDaBandeira.map((emp) => ({
-      ...emp,
-      sigla: emp.apelido || emp.codEmpresa.toString(),
-      label: `${emp.apelido || emp.codEmpresa} - ${emp.cnpj}`,
-    })),
-  ];
+  return [...opcoes, ...empresasFiltradasPorBandeira];
+});
+
+// Validação do botão salvar (só mês, ano e processos obrigatórios)
+const podeExecutar = computed(() => {
+  return (
+    mesExportacao.value &&
+    anoExportacao.value &&
+    processosSelecionados.value.length > 0
+  );
 });
 
 // ========== LIFECYCLE ==========
 onMounted(() => {
+  carregarBandeiras();
   carregarEmpresas();
 });
 
 // ========== FUNÇÕES API ==========
+async function carregarBandeiras() {
+  carregandoBandeiras.value = true;
+  try {
+    bandeiras.value = await bandeirasService.listarBandeiras();
+  } catch (error: any) {
+    console.error("Erro ao carregar bandeiras:", error);
+  } finally {
+    carregandoBandeiras.value = false;
+  }
+}
+
 async function carregarEmpresas() {
   carregandoEmpresas.value = true;
   try {
-    const response = await empresasHttp.listarEmpresas();
+    // Filtrar por bandeira se selecionada
+    const codBand =
+      filtroBandeira.value !== "T" ? Number(filtroBandeira.value) : undefined;
+    const response = await empresasHttp.listarEmpresas(codBand);
     empresas.value = response.data.dados || [];
   } catch (error: any) {
     console.error("Erro ao carregar empresas:", error);
@@ -573,8 +587,8 @@ async function carregarColaboradores() {
   }
 
   // Buscar empresa real pelos dados
-  const empresaReal = empresasFiltradas.value.find(
-    (e) => e.sigla === filtroEmpresa.value,
+  const empresaReal = empresas.value.find(
+    (e) => e.codEmpresa === filtroEmpresa.value,
   );
 
   if (!empresaReal || !empresaReal.codEmpresa) {
@@ -603,24 +617,31 @@ async function carregarColaboradores() {
   }
 }
 
+// Função para mudança de bandeira (fluxo correto Bandeira → Empresa)
+function onBandeiraChange() {
+  // Resetar empresa e colaborador quando bandeira mudar
+  filtroEmpresa.value = "T";
+  filtroColaborador.value = null;
+  colaboradoresExportacao.value = [];
+
+  // Recarregar empresas filtradas pela nova bandeira
+  carregarEmpresas();
+}
+
 async function carregarProcessosExportacao() {
-  if (!filtroBandeira.value || !mesExportacao.value || !anoExportacao.value) {
+  if (!mesExportacao.value || !anoExportacao.value) {
     processosExportacao.value = [];
     return;
   }
 
   carregandoProcessos.value = true;
-  processoSelecionado.value = null;
+  processosSelecionados.value = [];
 
   try {
-    // Mapear bandeira para categoria
-    let categoria = "UNI"; // Padrão Unimed
-    if (filtroBandeira.value === "G") categoria = "GSV";
-    if (filtroBandeira.value === "S") categoria = "SAN";
-
+    // ✅ CORRIGIDO: Tipo 'U' para módulo UNI (não 'C')
     const response = await exportacaoHttp.listarProcessos({
-      categoria,
-      tipoDado: "C",
+      categoria: "UNI", // ✅ Sempre UNI para este módulo
+      tipoDado: "U", // ✅ CORRETO: 'U' não 'C'
       mesRef: parseInt(mesExportacao.value),
       anoRef: parseInt(anoExportacao.value),
     });
@@ -634,18 +655,7 @@ async function carregarProcessosExportacao() {
   }
 }
 
-function onBandeiraChange() {
-  // Resetar filtros ao mudar bandeira
-  filtroEmpresa.value = null;
-  filtroColaborador.value = null;
-  colaboradoresExportacao.value = [];
-  processosExportacao.value = [];
-  processoSelecionado.value = null;
-
-  if (filtroBandeira.value) {
-    carregarProcessosExportacao();
-  }
-}
+// ❌ REMOVIDO: onBandeiraChange (bandeiras inventadas não existem mais)
 
 function onEmpresaChangeExportacao() {
   filtroColaborador.value = null;
@@ -731,6 +741,21 @@ async function executarImportacao() {
 function abrirModalExportacao() {
   modalExportacao.value = true;
   logsExportacao.value = [];
+
+  // ✅ Definir valores padrão como no npd-legacy
+  const hoje = new Date();
+  mesExportacao.value = String(hoje.getMonth() + 1).padStart(2, "0");
+  anoExportacao.value = String(hoje.getFullYear());
+
+  // Carregar empresas se ainda não foram carregadas
+  if (empresas.value.length === 0) {
+    carregarEmpresas();
+  }
+
+  // ✅ Carregar processos automaticamente como no npd-legacy (setTimeout de 2s como no original)
+  setTimeout(() => {
+    carregarProcessosExportacao();
+  }, 2000);
 }
 
 function fecharModalExportacao() {
@@ -738,29 +763,21 @@ function fecharModalExportacao() {
     modalExportacao.value = false;
     logsExportacao.value = [];
     // Resetar estado
-    filtroBandeira.value = null;
-    filtroEmpresa.value = null;
+    filtroBandeira.value = "T";
+    filtroEmpresa.value = "T";
     filtroColaborador.value = null;
     processosExportacao.value = [];
-    processoSelecionado.value = null;
+    processosSelecionados.value = [];
     previa.value = false;
     apagarDados.value = false;
   }
 }
 
 async function executarExportacao() {
-  if (!processoSelecionado.value) {
+  if (!processosSelecionados.value.length) {
     logsExportacao.value.push({
       tipo: "erro",
-      mensagem: "Selecione um processo para exportar",
-    });
-    return;
-  }
-
-  if (!filtroBandeira.value || !filtroEmpresa.value) {
-    logsExportacao.value.push({
-      tipo: "erro",
-      mensagem: "Selecione bandeira e empresa",
+      mensagem: "Selecione pelo menos um processo para exportar",
     });
     return;
   }
@@ -771,47 +788,28 @@ async function executarExportacao() {
   try {
     logsExportacao.value.push({
       tipo: "info",
-      mensagem: `Iniciando exportação para o TOTVS...`,
+      mensagem: `Iniciando exportação de ${processosSelecionados.value.length} processo(s) para o TOTVS...`,
     });
 
+    // ✅ CORRIGIDO: Enviar múltiplos processos como no NPD-Legacy
     const payload = {
       mesRef: parseInt(mesExportacao.value),
       anoRef: parseInt(anoExportacao.value),
-      codigoProcesso: processoSelecionado.value,
-      bandeira: filtroBandeira.value,
-      empresa: filtroEmpresa.value,
-      cpfColaborador: filtroColaborador.value || undefined,
+      processos: processosSelecionados.value, // ✅ Array de processos
+      codBand:
+        filtroBandeira.value !== "T" ? String(filtroBandeira.value) : "T",
+      empresa: filtroEmpresa.value !== "T" ? String(filtroEmpresa.value) : "T",
+      colaborador: filtroColaborador.value || "",
       previa: previa.value,
       apagar: apagarDados.value,
     };
 
-    const response = await exportacaoHttp.exportarParaTotvs(payload);
-    const resultado = response.data;
+    await exportacaoHttp.exportarParaTotvs(payload);
 
-    if (resultado.sucesso) {
-      logsExportacao.value.push({
-        tipo: "sucesso",
-        mensagem: resultado.mensagem || "Exportação concluída com sucesso!",
-      });
-
-      if (resultado.totalExportado > 0) {
-        logsExportacao.value.push({
-          tipo: "info",
-          mensagem: `Total exportado: ${resultado.totalExportado} registros`,
-        });
-      }
-    } else {
-      logsExportacao.value.push({
-        tipo: "erro",
-        mensagem: resultado.mensagem || "Erro na exportação",
-      });
-    }
-
-    if (resultado.erros && resultado.erros.length > 0) {
-      resultado.erros.forEach((erro: string) => {
-        logsExportacao.value.push({ tipo: "erro", mensagem: erro });
-      });
-    }
+    logsExportacao.value.push({
+      tipo: "sucesso",
+      mensagem: "Todos os processos foram executados com sucesso!",
+    });
   } catch (error: any) {
     console.error("Erro ao exportar:", error);
     logsExportacao.value.push({

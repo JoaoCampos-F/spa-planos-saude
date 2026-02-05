@@ -60,7 +60,7 @@ export interface Processo {
   ordem: number;
   dias: number;
   ativo: boolean;
-  tipoDeDado: "S" | "C";
+  tipoDado: "S" | "C" | "U";
 }
 
 export interface ApiResponseProcessos {

@@ -3,12 +3,17 @@ import BaseHttp from "../BaseHttp";
 export interface ExportarTotvsParams {
   mesRef: number;
   anoRef: number;
-  codigoProcesso: string; // Código do processo MCW (ex: '90000001') - UM processo por vez
-  bandeira?: string; // Código da bandeira (ex: 'U' = Unimed, 'G' = GSV, 'S' = SAN)
-  empresa?: string; // Sigla da empresa (ex: 'AF', 'BM') ou 'T' para todas da bandeira
-  cpfColaborador?: string; // CPF do colaborador específico (requer empresa específica)
-  previa?: boolean; // true = Gerar prévia, false = Definitivo
-  apagar?: boolean; // true = Apagar dados antigos (requer permissão ADMIN)
+  processos: string[]; // ✅ Array de códigos de processos MCW
+  codBand?: string; // Código da bandeira (2, 4, etc.) ou 'T' para todas
+  empresa?: string; // Código da empresa ou 'T' para todas da bandeira
+  colaborador?: string; // CPF do colaborador específico ou vazio para todos
+  previa?: boolean; // true = Gerar prévia sem gravar definitivo
+  apagar?: boolean; // true = Apagar dados antigos antes de processar
+
+  // Campos deprecados (compatibilidade)
+  codigoProcesso?: string; // @deprecated - Use processos[]
+  bandeira?: string; // @deprecated - Use codBand
+  cpfColaborador?: string; // @deprecated - Use colaborador
 }
 
 export interface ExportacaoResponse {
