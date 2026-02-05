@@ -272,19 +272,6 @@
           <!-- Divisão para Processos -->
           <v-divider class="my-4" v-if="logsExportacao.length === 0" />
 
-          <!-- Título da seção de processos -->
-          <div
-            v-if="!carregandoExportacao && logsExportacao.length === 0"
-            class="mb-3"
-          >
-            <h4
-              class="text-h6"
-              style="border-bottom: 2px dashed #ddd; padding-bottom: 8px"
-            >
-              ----------------------- Unimed -----------------------
-            </h4>
-          </div>
-
           <!-- Lista de Processos -->
           <div v-if="!carregandoExportacao && logsExportacao.length === 0">
             <div v-if="carregandoProcessos" class="text-center py-8">
