@@ -79,4 +79,12 @@ export default class ExportacaoHttp extends BaseHttp<ExportacaoResponse> {
       params,
     );
   }
+
+  /**
+   * GET /exportacao/logs
+   * Busca histórico de execuções dos processos
+   */
+  async buscarLogs(queryString: string) {
+    return this.http.get(`${this.resource()}/logs?${queryString}`);
+  }
 }

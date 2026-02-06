@@ -420,6 +420,124 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <!-- Modal de Histórico de Processos -->
+    <v-dialog v-model="modalHistorico" max-width="1200" persistent>
+      <v-card>
+        <v-card-title
+          class="d-flex align-center justify-space-between bg-warning"
+        >
+          <span>
+            <v-icon class="mr-2">mdi-history</v-icon>
+            Log dos Processos - {{ processoHistoricoSelecionado.descricao }}
+          </span>
+          <v-btn
+            icon="mdi-close"
+            variant="text"
+            @click="fecharModalHistorico"
+          />
+        </v-card-title>
+
+        <v-card-text class="pa-6">
+          <!-- Filtros -->
+          <v-row class="mb-4">
+            <v-col cols="12" md="3">
+              <v-select
+                label="Mês"
+                :items="meses"
+                v-model="filtroHistorico.mes"
+                item-title="nome"
+                item-value="valor"
+                clearable
+                @update:model-value="buscarHistorico"
+              />
+            </v-col>
+            <v-col cols="12" md="3">
+              <v-select
+                label="Ano"
+                :items="anos"
+                v-model="filtroHistorico.ano"
+                clearable
+                @update:model-value="buscarHistorico"
+              />
+            </v-col>
+            <v-col cols="12" md="6">
+              <v-text-field
+                label="Buscar por usuário"
+                prepend-inner-icon="mdi-magnify"
+                v-model="filtroHistorico.usuario"
+                clearable
+                @keyup.enter="buscarHistorico"
+              />
+            </v-col>
+          </v-row>
+
+          <!-- Tabela de Logs -->
+          <v-data-table
+            :headers="headersHistorico"
+            :items="logsHistoricoFiltrados"
+            :loading="carregandoHistorico"
+            class="elevation-1"
+            :items-per-page="10"
+            :sort-by="[{ key: 'dataProcessamento', order: 'desc' }]"
+          >
+            <!-- Status Prévia -->
+            <template #item.previa="{ item }">
+              <v-chip
+                :color="item.previa ? 'warning' : 'success'"
+                size="small"
+                variant="flat"
+              >
+                <v-icon start size="small">
+                  {{ item.previa ? "mdi-eye" : "mdi-check" }}
+                </v-icon>
+                {{ item.previa ? "Prévia" : "Executado" }}
+              </v-chip>
+            </template>
+
+            <!-- Status Apagar -->
+            <template #item.apaga="{ item }">
+              <v-chip
+                :color="item.apaga ? 'error' : 'grey'"
+                size="small"
+                variant="flat"
+              >
+                {{ item.apaga ? "Sim" : "Não" }}
+              </v-chip>
+            </template>
+
+            <!-- Duração -->
+            <template #item.duracao="{ item }">
+              <v-chip color="info" size="small" variant="flat">
+                <v-icon start size="small">mdi-clock-outline</v-icon>
+                {{ item.duracao }}
+              </v-chip>
+            </template>
+
+            <!-- Empty state -->
+            <template #no-data>
+              <div class="text-center py-8">
+                <v-icon size="64" color="grey-lighten-2"
+                  >mdi-database-search</v-icon
+                >
+                <h3 class="text-h6 mt-4 mb-2">Nenhuma execução encontrada</h3>
+                <p class="text-body-2 text-medium-emphasis">
+                  Não há registros de execução para este processo nos filtros
+                  selecionados.
+                </p>
+              </div>
+            </template>
+          </v-data-table>
+        </v-card-text>
+
+        <v-card-actions>
+          <v-spacer />
+          <v-btn color="primary" variant="text" @click="fecharModalHistorico">
+            Fechar
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -450,6 +568,44 @@ const anoExportacao = ref("2026");
 const carregandoExportacao = ref(false);
 const modalExportacao = ref(false);
 const logsExportacao = ref<Array<{ tipo: string; mensagem: string }>>([]);
+
+// ========== DADOS HISTÓRICO PROCESSOS ==========
+const modalHistorico = ref(false);
+const carregandoHistorico = ref(false);
+const logsHistorico = ref<ProcessoLog[]>([]);
+const processoHistoricoSelecionado = ref<any>({});
+const filtroHistorico = ref({
+  mes: null as string | null,
+  ano: null as string | null,
+  usuario: "",
+});
+
+// Interface para os logs de processo
+interface ProcessoLog {
+  codigo: string;
+  descricao: string;
+  categoria: string;
+  usuario: string;
+  dataProcessamento: string;
+  mesRef: number;
+  anoRef: number;
+  apaga: boolean;
+  previa: boolean;
+  horaInicio: number;
+  horaFinal: number;
+  periodo?: string;
+  duracao?: string;
+}
+
+// Headers da tabela de histórico
+const headersHistorico = [
+  { title: "Usuário", key: "usuario", align: "start" as const },
+  { title: "Data", key: "dataProcessamento", align: "center" as const },
+  { title: "Período", key: "periodo", align: "center" as const },
+  { title: "Duração", key: "duracao", align: "center" as const },
+  { title: "Prévia", key: "previa", align: "center" as const },
+  { title: "Apagar", key: "apaga", align: "center" as const },
+];
 
 // Filtros Exportação
 const filtroBandeira = ref<number | "T" | null>("T"); // Todas as bandeiras por padrão
@@ -537,7 +693,17 @@ onMounted(() => {
   carregarBandeiras();
   carregarEmpresas();
 });
+// Logs de histórico filtrados por usuário
+const logsHistoricoFiltrados = computed(() => {
+  if (!filtroHistorico.value.usuario) {
+    return logsHistorico.value;
+  }
 
+  const termo = filtroHistorico.value.usuario.toLowerCase();
+  return logsHistorico.value.filter((log) =>
+    log.usuario?.toLowerCase().includes(termo),
+  );
+});
 // ========== FUNÇÕES API ==========
 async function carregarBandeiras() {
   carregandoBandeiras.value = true;
@@ -653,9 +819,96 @@ function onEmpresaChangeExportacao() {
   }
 }
 
-function verHistoricoProcesso(codigoProcesso: string) {
-  // TODO: Implementar modal de histórico
-  console.log("Ver histórico do processo:", codigoProcesso);
+// ========== FUNÇÕES HISTÓRICO ==========
+async function verHistoricoProcesso(codigoProcesso: string) {
+  const processo = processosExportacao.value.find(
+    (p) => p.codigo === codigoProcesso,
+  );
+  if (!processo) {
+    console.error("Processo não encontrado:", codigoProcesso);
+    return;
+  }
+
+  processoHistoricoSelecionado.value = processo;
+  modalHistorico.value = true;
+
+  // Definir filtros padrão
+  filtroHistorico.value.mes = mesExportacao.value;
+  filtroHistorico.value.ano = anoExportacao.value;
+  filtroHistorico.value.usuario = "";
+
+  await buscarHistorico();
+}
+
+async function buscarHistorico() {
+  carregandoHistorico.value = true;
+  try {
+    const params = new URLSearchParams({
+      categoria: "UNI",
+      codigo: processoHistoricoSelecionado.value.codigo,
+    });
+
+    if (filtroHistorico.value.mes) {
+      params.set("mes", filtroHistorico.value.mes);
+    }
+
+    if (filtroHistorico.value.ano) {
+      params.set("ano", filtroHistorico.value.ano);
+    }
+
+    const response = await exportacaoHttp.buscarLogs(params.toString());
+
+    // Processar dados para a tabela
+    logsHistorico.value = response.data.dados.map((log: any) => ({
+      ...log,
+      periodo: `${log.mesRef}/${log.anoRef}`,
+      duracao: calcularDuracao(log.horaInicio, log.horaFinal),
+      dataProcessamento: formatarData(log.dataProcessamento),
+    }));
+  } catch (error: any) {
+    console.error("Erro ao carregar histórico:", error);
+    // notificar erro se houver sistema de notificações
+  } finally {
+    carregandoHistorico.value = false;
+  }
+}
+
+function fecharModalHistorico() {
+  modalHistorico.value = false;
+  logsHistorico.value = [];
+  processoHistoricoSelecionado.value = {};
+  filtroHistorico.value = {
+    mes: null,
+    ano: null,
+    usuario: "",
+  };
+}
+
+// Calcular duração em formato legível
+function calcularDuracao(inicio: number, fim: number): string {
+  const duracaoMinutos = Math.round((fim - inicio) * 24 * 60);
+  if (duracaoMinutos < 1) return "< 1min";
+  if (duracaoMinutos < 60) return `${duracaoMinutos}min`;
+  const horas = Math.floor(duracaoMinutos / 60);
+  const minutos = duracaoMinutos % 60;
+  return `${horas}h ${minutos}min`;
+}
+
+// Formatar data para exibição
+function formatarData(data: string): string {
+  if (!data) return "-";
+
+  try {
+    return new Date(data).toLocaleString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  } catch (error) {
+    return data; // retorna original se der erro
+  }
 }
 
 // ========== FUNÇÕES IMPORTAÇÃO ==========
