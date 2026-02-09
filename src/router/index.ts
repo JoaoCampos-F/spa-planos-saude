@@ -31,7 +31,7 @@ const router = createRouter({
           path: "/beneficiarios",
           name: "PageBeneficiarios",
           component: PageBeneficiarios,
-          meta: { requiresAuth: true, roles: ["ADMIN", "DP"] },
+          meta: { requiresAuth: true, roles: ["ADMIN", "DP", "COLABORADOR"] },
         },
         {
           path: "/dashboard",

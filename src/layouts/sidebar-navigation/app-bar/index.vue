@@ -4,10 +4,10 @@
     v-if="!vuetify.display.mobile.value"
     class="pa-0 position-fixed"
     color="primary"
-    elevation="0"
-    height="60"
+    elevation="1"
+    height="64"
   >
-    <v-container height="65" :width="65"> </v-container>
+    <v-container height="64" :width="64"> </v-container>
 
     <v-btn
       class="ma-1"
@@ -38,10 +38,10 @@
     <v-menu :close-on-back="true" :close-on-content-click="false" offset-y>
       <template #activator="{ props }">
         <v-avatar
-          class="mr-4 cursor-pointer border-lg border-light"
-          elevation="5"
-          size="40"
-          variant="outlined"
+          class="mr-4 cursor-pointer"
+          elevation="3"
+          size="42"
+          style="border: 2px solid rgba(255, 255, 255, 0.3)"
           v-bind="props"
         >
           <img
@@ -61,18 +61,19 @@
 
       <v-card
         class="pa-3 dropdown-card perfil-personalziado"
-        elevation="1"
+        elevation="3"
         height="auto"
         width="300"
+        style="border-radius: 12px"
       >
         <div class="text-center mb-1">
           <v-card class="elevation-0">
             <template #title>
               <v-avatar
-                class="mb-2 mx-3 border-lg border-primary"
-                elevation="5"
-                size="60"
-                variant="outlined"
+                class="mb-2 mx-3"
+                elevation="2"
+                size="64"
+                style="border: 3px solid rgb(var(--v-theme-primary))"
               >
                 <img
                   alt="Imagem de Perfil"

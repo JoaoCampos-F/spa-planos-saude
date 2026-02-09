@@ -1,32 +1,45 @@
 <!-- 📁 src/pages/importacao/index.vue -->
 <template>
-  <v-container fluid>
+  <v-container fluid class="pa-0">
+    <PageHeader
+      title="Importação e Exportação"
+      subtitle="Gerencie os processos de importação da Unimed e exportação para Totvs"
+      icon="mdi-swap-horizontal"
+    />
+
     <v-row>
       <!-- ========== CARD IMPORTAÇÃO ========== -->
       <v-col cols="12" md="6">
-        <v-card elevation="2" class="h-100 d-flex flex-column">
-          <v-card-title class="bg-primary">
-            <v-icon class="mr-2">mdi-cloud-download</v-icon>
-            Importar Unimed Cuiabá
-          </v-card-title>
-
-          <v-card-text class="pa-6 flex-grow-1">
-            <h3 class="text-h6 mb-3">Processo de Importação</h3>
-            <p class="text-body-1 mb-3">
+        <v-card
+          elevation="2"
+          class="h-100 d-flex flex-column action-card action-card--import"
+          style="border-radius: 16px; overflow: hidden"
+        >
+          <v-card-text class="pa-8 flex-grow-1">
+            <div class="d-flex align-center mb-4">
+              <v-avatar color="primary" variant="tonal" size="56" class="mr-4">
+                <v-icon color="primary" size="32">mdi-cloud-download</v-icon>
+              </v-avatar>
+              <div>
+                <h3 class="text-h5 font-weight-bold mb-1">Importar Unimed</h3>
+                <p class="text-body-2 text-medium-emphasis ma-0">Cuiabá</p>
+              </div>
+            </div>
+            <p class="text-body-1">
               Busca dados de mensalidades diretamente da API da Unimed Cuiabá e
               traz para o sistema local.
             </p>
           </v-card-text>
 
           <v-card-actions class="pa-6 pt-0">
-            <v-spacer />
             <v-btn
               color="primary"
-              size="large"
+              size="x-large"
               @click="abrirModalImportacao"
               block
+              variant="flat"
             >
-              <v-icon left>mdi-cloud-download</v-icon>
+              <v-icon start>mdi-cloud-download</v-icon>
               Iniciar Importação
             </v-btn>
           </v-card-actions>
@@ -34,29 +47,38 @@
       </v-col>
 
       <v-col cols="12" md="6">
-        <v-card elevation="2" class="h-100 d-flex flex-column">
-          <v-card-title class="bg-success">
-            <v-icon class="mr-2">mdi-cloud-upload</v-icon>
-            Exportar Totvs
-          </v-card-title>
-
-          <v-card-text class="pa-6 flex-grow-1">
-            <h3 class="text-h6 mb-3">Processo de Exportação</h3>
-            <p class="text-body-1 mb-3">
+        <v-card
+          elevation="2"
+          class="h-100 d-flex flex-column action-card action-card--export"
+          style="border-radius: 16px; overflow: hidden"
+        >
+          <v-card-text class="pa-8 flex-grow-1">
+            <div class="d-flex align-center mb-4">
+              <v-avatar color="success" variant="tonal" size="56" class="mr-4">
+                <v-icon color="success" size="32">mdi-cloud-upload</v-icon>
+              </v-avatar>
+              <div>
+                <h3 class="text-h5 font-weight-bold mb-1">Exportar Totvs</h3>
+                <p class="text-body-2 text-medium-emphasis ma-0">
+                  Folha de Pagamento
+                </p>
+              </div>
+            </div>
+            <p class="text-body-1">
               Processa os dados importados e exporta para a folha de pagamento
               do sistema Totvs RM.
             </p>
           </v-card-text>
 
           <v-card-actions class="pa-6 pt-0">
-            <v-spacer />
             <v-btn
               color="success"
-              size="large"
+              size="x-large"
               @click="abrirModalExportacao"
               block
+              variant="flat"
             >
-              <v-icon left>mdi-cloud-upload</v-icon>
+              <v-icon start>mdi-cloud-upload</v-icon>
               Iniciar Exportação
             </v-btn>
           </v-card-actions>
@@ -66,11 +88,17 @@
 
     <!-- ========== MODAL IMPORTAÇÃO ========== -->
     <v-dialog v-model="modalImportacao" max-width="800" persistent>
-      <v-card>
+      <v-card style="border-radius: 16px">
         <v-card-title
-          class="bg-primary d-flex justify-space-between align-center"
+          class="d-flex justify-space-between align-center pa-6"
+          style="background: rgb(var(--v-theme-surface-container-high))"
         >
-          <span>Processamento de Importação</span>
+          <div class="d-flex align-center">
+            <v-avatar color="primary" variant="tonal" size="40" class="mr-3">
+              <v-icon color="primary" size="24">mdi-cloud-download</v-icon>
+            </v-avatar>
+            <span class="text-h6">Processamento de Importação</span>
+          </div>
           <v-btn
             icon
             variant="text"
@@ -173,14 +201,17 @@
 
     <!-- ========== MODAL EXPORTAÇÃO ========== -->
     <v-dialog v-model="modalExportacao" max-width="900" persistent>
-      <v-card>
+      <v-card style="border-radius: 16px">
         <v-card-title
-          class="bg-success d-flex justify-space-between align-center"
+          class="d-flex justify-space-between align-center pa-6"
+          style="background: rgb(var(--v-theme-surface-container-high))"
         >
-          <span>
-            <v-icon class="mr-2">mdi-cloud-upload</v-icon>
-            Processamento de Exportação
-          </span>
+          <div class="d-flex align-center">
+            <v-avatar color="success" variant="tonal" size="40" class="mr-3">
+              <v-icon color="success" size="24">mdi-cloud-upload</v-icon>
+            </v-avatar>
+            <span class="text-h6">Processamento de Exportação</span>
+          </div>
           <v-btn
             icon
             variant="text"
@@ -1077,5 +1108,44 @@ async function executarExportacao() {
 
 .processo-item:hover {
   background-color: rgba(0, 0, 0, 0.02);
+}
+
+/* Action Cards */
+.action-card {
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.action-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: transparent;
+  transition: all 0.3s ease;
+}
+
+.action-card--import:hover::before {
+  background: linear-gradient(
+    90deg,
+    rgb(var(--v-theme-primary)) 0%,
+    rgb(var(--v-theme-info)) 100%
+  );
+}
+
+.action-card--export:hover::before {
+  background: linear-gradient(
+    90deg,
+    rgb(var(--v-theme-success)) 0%,
+    rgb(var(--v-theme-accent)) 100%
+  );
+}
+
+.action-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12) !important;
 }
 </style>

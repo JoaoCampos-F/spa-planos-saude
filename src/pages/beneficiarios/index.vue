@@ -1,18 +1,19 @@
 <template>
-  <div class="pa-2">
+  <v-container fluid class="pa-0">
     <!-- Header -->
-    <div class="d-flex justify-space-between align-center mb-3">
-      <div>
-        <h1 class="text-h4 font-weight-bold">Beneficiários</h1>
-        <p class="text-body-2 text-medium-emphasis">
-          Gestão de beneficiários - Controle de exportação para pagamento
-        </p>
-      </div>
-    </div>
+    <PageHeader
+      title="Beneficiários"
+      subtitle="Gestão de beneficiários - Controle de exportação para pagamento"
+      icon="mdi-account-multiple"
+    />
 
     <!-- Filtros -->
-    <v-card class="mb-2" elevation="1">
-      <v-card-text>
+    <v-card
+      class="mb-4"
+      elevation="2"
+      style="background: rgb(var(--v-theme-surface-container))"
+    >
+      <v-card-text class="pa-6">
         <v-row>
           <v-col cols="12" md="3">
             <v-autocomplete
@@ -66,7 +67,13 @@
           </v-col>
 
           <v-col cols="12" md="2" class="d-flex align-center">
-            <v-btn color="primary" block :loading="carregando" @click="buscar">
+            <v-btn
+              color="primary"
+              block
+              :loading="carregando"
+              @click="buscar"
+              size="large"
+            >
               <v-icon start>mdi-magnify</v-icon>
               Buscar
             </v-btn>
@@ -76,7 +83,7 @@
     </v-card>
 
     <!-- Tabela -->
-    <v-card elevation="1">
+    <v-card elevation="2" style="border-radius: 12px">
       <v-card-text>
         <v-data-table-server
           v-model:items-per-page="itemsPerPage"
@@ -176,23 +183,24 @@
         <v-btn variant="text" @click="snackbar.show = false">Fechar</v-btn>
       </template>
     </v-snackbar>
-  </div>
+  </v-container>
 </template>
 
 <script setup lang="ts">
 import { ref, reactive, onMounted } from "vue";
+import PageHeader from "@/components/PageHeader.vue";
 import ColaboradoresHttp, {
   type ColaboradorResumo,
 } from "@/services/http/Colaboradores";
 import EmpresasHttp from "@/services/http/Empresas";
-import type { EmpresaSimplificada } from "@/interfaces/api.interfaces";
+import type { EmpresaCompleta } from "@/interfaces/api.interfaces";
 
 const colaboradoresHttp = new ColaboradoresHttp();
 const empresasHttp = new EmpresasHttp();
 
 // Dados
 const colaboradores = ref<ColaboradorResumo[]>([]);
-const empresasData = ref<EmpresaSimplificada[]>([]);
+const empresasData = ref<EmpresaCompleta[]>([]);
 const carregando = ref(false);
 const atualizando = ref(false);
 const page = ref(1);
@@ -293,7 +301,7 @@ const headers = [
     title: "Total",
     key: "valorTotal",
     sortable: true,
-    align: "end",
+    align: "end" as const,
     minWidth: "130px",
   },
   {
@@ -317,7 +325,9 @@ async function carregarEmpresas() {
 
 function onEmpresaChange(codEmpresa: number | undefined) {
   if (codEmpresa) {
-    const empresa = empresasData.value.find((e) => e.codEmpresa === codEmpresa);
+    const empresa = empresasData.value.find(
+      (e: EmpresaCompleta) => e.codEmpresa === codEmpresa,
+    );
     if (empresa) {
       filtros.codColigada = empresa.codColigada;
     }
@@ -401,3 +411,16 @@ onMounted(async () => {
   await buscar();
 });
 </script>
+<style scoped>
+:deep(.v-data-table) {
+  border-radius: 12px;
+}
+
+:deep(.v-data-table tbody tr:hover) {
+  background-color: rgba(var(--v-theme-on-surface), 0.04) !important;
+}
+
+:deep(.v-data-table-header) {
+  background-color: rgb(var(--v-theme-surface-container-high));
+}
+</style>

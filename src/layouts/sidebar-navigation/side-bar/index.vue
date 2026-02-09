@@ -32,7 +32,7 @@
       />
 
       <MenuItemSidebar
-        v-can:role="['ADMIN', 'DP']"
+        v-can:role="['ADMIN', 'DP', 'COLABORADOR']"
         icon="mdi-account-multiple"
         name="Beneficiários"
         :rail="isRail()"

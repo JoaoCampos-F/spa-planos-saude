@@ -1,10 +1,34 @@
 <template>
-  <v-container fluid>
-    <!-- Formulário de Parâmetros -->
-    <v-card elevation="2" class="mb-1">
-      <v-card-title> Parâmetros dos Relatórios </v-card-title>
+  <v-container fluid class="pa-0">
+    <!-- Header -->
+    <PageHeader
+      title="Relatórios"
+      subtitle="Gere relatórios detalhados de colaboradores, empresas e departamentos"
+      icon="mdi-file-chart"
+    />
 
-      <v-card-text class="pa-3">
+    <!-- Formulário de Parâmetros -->
+    <v-card
+      elevation="2"
+      class="mb-6"
+      style="
+        border-radius: 12px;
+        background: rgb(var(--v-theme-surface-container));
+      "
+    >
+      <v-card-title
+        class="pa-6"
+        style="background: rgb(var(--v-theme-surface-container-high))"
+      >
+        <div class="d-flex align-center">
+          <v-avatar color="primary" variant="tonal" size="40" class="mr-3">
+            <v-icon color="primary" size="24">mdi-tune</v-icon>
+          </v-avatar>
+          <span class="text-h6">Parâmetros dos Relatórios</span>
+        </div>
+      </v-card-title>
+
+      <v-card-text class="pa-6">
         <v-row>
           <v-col cols="12" md="2">
             <v-autocomplete
@@ -75,43 +99,67 @@
               hide-details
             />
           </v-col>
-          <v-col cols="1" class="d-flex align-center">
+          <v-col cols="12" md="1" class="d-flex align-center">
             <v-btn
-              color="grey-darken-1"
-              variant="outlined"
+              color="primary"
+              variant="tonal"
               @click="limparParametros"
-              prepend-icon="mdi-refresh"
+              block
+              size="large"
             >
-              Limpar
+              <v-icon>mdi-refresh</v-icon>
             </v-btn>
           </v-col>
         </v-row>
       </v-card-text>
     </v-card>
 
-    <v-card elevation="2">
-      <v-card-title> Selecione o relatório desejado </v-card-title>
-      <v-card-text>
-        <v-divider class="my-4" />
-
+    <!-- Cards de Relatórios -->
+    <v-card elevation="2" style="border-radius: 12px">
+      <v-card-title
+        class="pa-6"
+        style="background: rgb(var(--v-theme-surface-container-high))"
+      >
+        <div class="d-flex align-center">
+          <v-avatar color="health-blue" variant="tonal" size="40" class="mr-3">
+            <v-icon color="health-blue" size="24"
+              >mdi-file-document-multiple</v-icon
+            >
+          </v-avatar>
+          <span class="text-h6">Selecione o relatório desejado</span>
+        </div>
+      </v-card-title>
+      <v-card-text class="pa-6">
         <!-- Cards de Relatórios -->
         <v-row>
           <!-- Relatório de Colaborador -->
           <v-col cols="12" sm="6" md="4">
             <v-card
               class="relatorio-card"
-              elevation="3"
+              elevation="2"
               hover
               @click="gerarRelatorio('colaborador')"
+              style="border-radius: 12px; cursor: pointer"
             >
-              <v-card-title class="bg-blue-lighten-4 d-flex align-center">
-                <v-icon class="mr-2" color="blue-darken-2"
-                  >mdi-account-details</v-icon
-                >
-                <span class="text-body-1">Relatório Colaborador</span>
-              </v-card-title>
-              <v-card-text class="pa-4">
-                <p class="text-body-2 text-grey-darken-1">
+              <v-card-text class="pa-5">
+                <div class="d-flex align-center mb-3">
+                  <v-avatar
+                    color="health-blue"
+                    variant="tonal"
+                    size="48"
+                    class="mr-3"
+                  >
+                    <v-icon color="health-blue" size="28"
+                      >mdi-account-details</v-icon
+                    >
+                  </v-avatar>
+                  <div>
+                    <div class="text-subtitle-1 font-weight-bold">
+                      Relatório Colaborador
+                    </div>
+                  </div>
+                </div>
+                <p class="text-body-2 text-medium-emphasis mb-0">
                   Dados detalhados de colaborador(es). Pode filtrar por CPF
                   específico.
                 </p>
@@ -123,18 +171,30 @@
           <v-col cols="12" sm="6" md="4">
             <v-card
               class="relatorio-card"
-              elevation="3"
+              elevation="2"
               hover
               @click="gerarRelatorio('empresa')"
+              style="border-radius: 12px; cursor: pointer"
             >
-              <v-card-title class="bg-green-lighten-4 d-flex align-center">
-                <v-icon class="mr-2" color="green-darken-2"
-                  >mdi-office-building</v-icon
-                >
-                <span class="text-body-1">Resumo Empresa</span>
-              </v-card-title>
-              <v-card-text class="pa-4">
-                <p class="text-body-2 text-grey-darken-1">
+              <v-card-text class="pa-5">
+                <div class="d-flex align-center mb-3">
+                  <v-avatar
+                    color="health-green"
+                    variant="tonal"
+                    size="48"
+                    class="mr-3"
+                  >
+                    <v-icon color="health-green" size="28"
+                      >mdi-office-building</v-icon
+                    >
+                  </v-avatar>
+                  <div>
+                    <div class="text-subtitle-1 font-weight-bold">
+                      Resumo Empresa
+                    </div>
+                  </div>
+                </div>
+                <p class="text-body-2 text-medium-emphasis mb-0">
                   Resumo de todos colaboradores da empresa (sem filtro por CPF).
                 </p>
               </v-card-text>
@@ -145,18 +205,28 @@
           <v-col cols="12" sm="6" md="4">
             <v-card
               class="relatorio-card"
-              elevation="3"
+              elevation="2"
               hover
               @click="gerarRelatorio('pagamento')"
+              style="border-radius: 12px; cursor: pointer"
             >
-              <v-card-title class="bg-success-lighten-4 d-flex align-center">
-                <v-icon class="mr-2" color="success-darken-2"
-                  >mdi-check-circle</v-icon
-                >
-                <span class="text-body-1">Com Lançamento</span>
-              </v-card-title>
-              <v-card-text class="pa-4">
-                <p class="text-body-2 text-grey-darken-1">
+              <v-card-text class="pa-5">
+                <div class="d-flex align-center mb-3">
+                  <v-avatar
+                    color="success"
+                    variant="tonal"
+                    size="48"
+                    class="mr-3"
+                  >
+                    <v-icon color="success" size="28">mdi-check-circle</v-icon>
+                  </v-avatar>
+                  <div>
+                    <div class="text-subtitle-1 font-weight-bold">
+                      Com Lançamento
+                    </div>
+                  </div>
+                </div>
+                <p class="text-body-2 text-medium-emphasis mb-0">
                   Colaboradores que tem EXPORTA=S (com lançamento para folha).
                 </p>
               </v-card-text>
@@ -167,18 +237,28 @@
           <v-col cols="12" sm="6" md="4">
             <v-card
               class="relatorio-card"
-              elevation="3"
+              elevation="2"
               hover
               @click="gerarRelatorio('nao-pagamento')"
+              style="border-radius: 12px; cursor: pointer"
             >
-              <v-card-title class="bg-orange-lighten-4 d-flex align-center">
-                <v-icon class="mr-2" color="orange-darken-2"
-                  >mdi-alert-circle</v-icon
-                >
-                <span class="text-body-1">Sem Lançamento</span>
-              </v-card-title>
-              <v-card-text class="pa-4">
-                <p class="text-body-2 text-grey-darken-1">
+              <v-card-text class="pa-5">
+                <div class="d-flex align-center mb-3">
+                  <v-avatar
+                    color="warning"
+                    variant="tonal"
+                    size="48"
+                    class="mr-3"
+                  >
+                    <v-icon color="warning" size="28">mdi-alert-circle</v-icon>
+                  </v-avatar>
+                  <div>
+                    <div class="text-subtitle-1 font-weight-bold">
+                      Sem Lançamento
+                    </div>
+                  </div>
+                </div>
+                <p class="text-body-2 text-medium-emphasis mb-0">
                   Colaboradores que tem EXPORTA=N (sem lançamento para folha).
                 </p>
               </v-card-text>
@@ -189,18 +269,30 @@
           <v-col cols="12" sm="6" md="4">
             <v-card
               class="relatorio-card"
-              elevation="3"
+              elevation="2"
               hover
               @click="gerarRelatorio('resumo-depto')"
+              style="border-radius: 12px; cursor: pointer"
             >
-              <v-card-title class="bg-purple-lighten-4 d-flex align-center">
-                <v-icon class="mr-2" color="purple-darken-2"
-                  >mdi-file-tree</v-icon
-                >
-                <span class="text-body-1">Resumo Departamento</span>
-              </v-card-title>
-              <v-card-text class="pa-4">
-                <p class="text-body-2 text-grey-darken-1">
+              <v-card-text class="pa-5">
+                <div class="d-flex align-center mb-3">
+                  <v-avatar
+                    color="health-purple"
+                    variant="tonal"
+                    size="48"
+                    class="mr-3"
+                  >
+                    <v-icon color="health-purple" size="28"
+                      >mdi-file-tree</v-icon
+                    >
+                  </v-avatar>
+                  <div>
+                    <div class="text-subtitle-1 font-weight-bold">
+                      Resumo Departamento
+                    </div>
+                  </div>
+                </div>
+                <p class="text-body-2 text-medium-emphasis mb-0">
                   Agrupamento por colaborador e centro de custo.
                 </p>
               </v-card-text>
@@ -211,18 +303,28 @@
           <v-col cols="12" sm="6" md="4">
             <v-card
               class="relatorio-card"
-              elevation="3"
+              elevation="2"
               hover
               @click="gerarRelatorio('resumo-centro-custo')"
+              style="border-radius: 12px; cursor: pointer"
             >
-              <v-card-title class="bg-cyan-lighten-4 d-flex align-center">
-                <v-icon class="mr-2" color="cyan-darken-2"
-                  >mdi-chart-box</v-icon
-                >
-                <span class="text-body-1">Totalização Centro Custo</span>
-              </v-card-title>
-              <v-card-text class="pa-4">
-                <p class="text-body-2 text-grey-darken-1">
+              <v-card-text class="pa-5">
+                <div class="d-flex align-center mb-3">
+                  <v-avatar
+                    color="health-teal"
+                    variant="tonal"
+                    size="48"
+                    class="mr-3"
+                  >
+                    <v-icon color="health-teal" size="28">mdi-chart-box</v-icon>
+                  </v-avatar>
+                  <div>
+                    <div class="text-subtitle-1 font-weight-bold">
+                      Totalização Centro Custo
+                    </div>
+                  </div>
+                </div>
+                <p class="text-body-2 text-medium-emphasis mb-0">
                   Totais agregados por centro de custo.
                 </p>
               </v-card-text>
@@ -239,7 +341,7 @@
 
     <!-- Dialog de Loading -->
     <v-dialog v-model="dialogCarregando" persistent max-width="400">
-      <v-card>
+      <v-card style="border-radius: 16px">
         <v-card-text class="text-center pa-8">
           <v-progress-circular
             indeterminate
@@ -247,8 +349,8 @@
             size="64"
             class="mb-4"
           />
-          <p class="text-h6 mb-2">Gerando Relatório</p>
-          <p class="text-body-2 text-grey-darken-1">
+          <p class="text-h6 mb-2 font-weight-bold">Gerando Relatório</p>
+          <p class="text-body-2 text-medium-emphasis mb-0">
             Aguarde enquanto processamos os dados...
           </p>
         </v-card-text>
@@ -259,6 +361,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue";
+import PageHeader from "@/components/PageHeader.vue";
 import EmpresasHttp from "@/services/http/Empresas";
 import ContratosHttp from "@/services/http/Contratos";
 import ColaboradoresHttp from "@/services/http/Colaboradores";
@@ -528,22 +631,18 @@ function mostrarErro(message: string) {
 
 <style scoped>
 .relatorio-card {
-  cursor: pointer;
   transition: all 0.3s ease;
   height: 100%;
+  border: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 .relatorio-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2) !important;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12) !important;
+  border-color: rgb(var(--v-theme-primary));
 }
 
-.relatorio-card .v-card-title {
-  font-size: 0.95rem;
-  padding: 12px 16px;
-}
-
-.relatorio-card .v-card-text {
-  min-height: 80px;
+.relatorio-card:active {
+  transform: translateY(-2px);
 }
 </style>

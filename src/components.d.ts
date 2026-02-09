@@ -20,6 +20,7 @@ declare module 'vue' {
     MenuFilterSelect: typeof import('./components/tables/filters/MenuFilterSelect.vue')['default']
     NotificationBox: typeof import('./components/Notifications/NotificationBox.vue')['default']
     PageBreadcrumb: typeof import('./components/PageBreadcrumb.vue')['default']
+    PageHeader: typeof import('./components/PageHeader.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     TableFilterGroup: typeof import('./components/tables/filters/TableFilterGroup.vue')['default']

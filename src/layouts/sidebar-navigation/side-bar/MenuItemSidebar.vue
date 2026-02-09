@@ -3,7 +3,7 @@
     :class="`my-min py-min w-100 d-flex align-center ${
       rail ? 'justify-center' : 'justify-start pl-4'
     }`"
-    color="secondary"
+    color="primary"
     density="comfortable"
     rounded="xl"
     variant="flat"
@@ -37,5 +37,14 @@ const props = defineProps<{
 .item-font {
   font-weight: 450 !important;
   font-size: 14px !important;
+}
+
+/* Ajusta transparência da seleção para cor primária */
+:deep(.v-list-item--active) {
+  background-color: rgba(11, 127, 191, 0.12) !important;
+}
+
+:deep(.v-list-item--active:hover) {
+  background-color: rgba(11, 127, 191, 0.18) !important;
 }
 </style>

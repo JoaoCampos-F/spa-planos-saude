@@ -1,13 +1,32 @@
 <template>
-  <v-container fluid>
+  <v-container fluid class="pa-0">
+    <!-- Header -->
+    <PageHeader
+      title="Processos de Exportação"
+      subtitle="Gerencie e monitore os processos de exportação para TOTVS"
+      icon="mdi-cog-sync"
+    />
+
     <!-- Formulário de Exportação -->
-    <v-card elevation="2" class="mb-6">
-      <v-card-title class="bg-primary text-white d-flex align-center">
-        <v-icon class="mr-2">mdi-cloud-upload</v-icon>
-        Exportação para TOTVS
+    <v-card
+      elevation="2"
+      class="mb-6"
+      style="
+        border-radius: 12px;
+        background: rgb(var(--v-theme-surface-container));
+      "
+    >
+      <v-card-title
+        class="d-flex align-center pa-6"
+        style="background: rgb(var(--v-theme-surface-container-high))"
+      >
+        <v-avatar color="primary" variant="tonal" size="40" class="mr-3">
+          <v-icon color="primary" size="24">mdi-cloud-upload</v-icon>
+        </v-avatar>
+        <span class="text-h6">Exportação para TOTVS</span>
       </v-card-title>
 
-      <v-card-text class="pa-6">
+      <v-card-text class="pa-8">
         <!-- Filtros Principais -->
         <v-row>
           <v-col cols="12" md="4">
@@ -327,6 +346,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue";
+import PageHeader from "@/components/PageHeader.vue";
 import EmpresasHttp from "@/services/http/Empresas";
 import ColaboradoresHttp from "@/services/http/Colaboradores";
 import ExportacaoHttp from "@/services/http/Exportacao";
