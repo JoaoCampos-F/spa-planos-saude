@@ -168,7 +168,7 @@
           </v-col>
 
           <!-- Relatório Resumo Empresa -->
-          <v-col cols="12" sm="6" md="4">
+          <v-col v-can:role="['DP', 'ADMIN']" cols="12" sm="6" md="4">
             <v-card
               class="relatorio-card"
               elevation="2"
@@ -202,7 +202,7 @@
           </v-col>
 
           <!-- Relatório Com Lançamento -->
-          <v-col cols="12" sm="6" md="4">
+          <v-col v-can:role="['DP', 'ADMIN']" cols="12" sm="6" md="4">
             <v-card
               class="relatorio-card"
               elevation="2"
@@ -234,7 +234,7 @@
           </v-col>
 
           <!-- Relatório Sem Lançamento -->
-          <v-col cols="12" sm="6" md="4">
+          <v-col v-can:role="['DP', 'ADMIN']" cols="12" sm="6" md="4">
             <v-card
               class="relatorio-card"
               elevation="2"
@@ -266,7 +266,7 @@
           </v-col>
 
           <!-- Resumo por Departamento -->
-          <v-col cols="12" sm="6" md="4">
+          <v-col v-can:role="['DP', 'ADMIN']" cols="12" sm="6" md="4">
             <v-card
               class="relatorio-card"
               elevation="2"
@@ -300,7 +300,7 @@
           </v-col>
 
           <!-- Resumo Centro de Custo -->
-          <v-col cols="12" sm="6" md="4">
+          <v-col v-can:role="['DP', 'ADMIN']" cols="12" sm="6" md="4">
             <v-card
               class="relatorio-card"
               elevation="2"
@@ -362,6 +362,8 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue";
 import PageHeader from "@/components/PageHeader.vue";
+import { permissions } from "@/stores/permissionsStore";
+import { userSystem } from "@/stores/userSystem";
 import EmpresasHttp from "@/services/http/Empresas";
 import ContratosHttp from "@/services/http/Contratos";
 import ColaboradoresHttp from "@/services/http/Colaboradores";
@@ -427,6 +429,17 @@ const anos = computed(() => {
   return Array.from({ length: 5 }, (_, i) => String(anoAtual - i));
 });
 
+// Verifica se usuário é COLABORADOR (sem ser DP ou ADMIN)
+const isColaborador = computed(() => {
+  const permissionStore = permissions();
+  const roles = permissionStore.getRoles;
+  return (
+    roles.includes("COLABORADOR") &&
+    !roles.includes("DP") &&
+    !roles.includes("ADMIN")
+  );
+});
+
 const empresas = computed(() => {
   if (empresasData.value.length === 0) return [];
 
@@ -466,6 +479,23 @@ const colaboradores = computed(() => {
 onMounted(() => {
   carregarEmpresas();
   carregarContratos();
+
+  // Se for COLABORADOR, pré-selecionar sua empresa e CPF
+  if (isColaborador.value) {
+    const user = userSystem();
+    const colaboradorData = user.getColaborador as any;
+
+    if (colaboradorData?.cod_empresa) {
+      parametros.value.codEmpresa = colaboradorData.cod_empresa;
+      parametros.value.codColigada = colaboradorData.codcoligada;
+      parametros.value.codFilial = colaboradorData.codfilial;
+      parametros.value.codBand = colaboradorData.cod_band;
+    }
+
+    if (colaboradorData?.cpf) {
+      parametros.value.cpf = colaboradorData.cpf;
+    }
+  }
 });
 
 // Funções

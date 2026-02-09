@@ -131,6 +131,7 @@
           <!-- Exportar -->
           <template #[`item.exporta`]="{ item }">
             <v-switch
+              v-if="isColaborador"
               :model-value="item.exporta === 'S'"
               color="primary"
               hide-details
@@ -187,8 +188,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from "vue";
+import { ref, reactive, onMounted, computed } from "vue";
 import PageHeader from "@/components/PageHeader.vue";
+import { permissions } from "@/stores/permissionsStore";
+import { userSystem } from "@/stores/userSystem";
 import ColaboradoresHttp, {
   type ColaboradorResumo,
 } from "@/services/http/Colaboradores";
@@ -312,6 +315,17 @@ const headers = [
   },
 ];
 
+// Verifica se usuário é COLABORADOR (sem ser DP ou ADMIN)
+const isColaborador = computed(() => {
+  const permissionStore = permissions();
+  const roles = permissionStore.getRoles;
+  return (
+    roles.includes("COLABORADOR") &&
+    !roles.includes("DP") &&
+    !roles.includes("ADMIN")
+  );
+});
+
 // Funções
 async function carregarEmpresas() {
   try {
@@ -368,6 +382,12 @@ async function buscar() {
 }
 
 async function toggleExporta(colaborador: ColaboradorResumo) {
+  // COLABORADOR não pode editar
+  if (isColaborador.value) {
+    mostrarErro("Você não tem permissão para alterar este campo");
+    return;
+  }
+
   const novoValor = colaborador.exporta === "S" ? "N" : "S";
 
   atualizando.value = true;
@@ -408,6 +428,20 @@ function mostrarErro(mensagem: string) {
 // Lifecycle
 onMounted(async () => {
   await carregarEmpresas();
+
+  // Se for COLABORADOR, pré-selecionar sua empresa
+  if (isColaborador.value) {
+    const user = userSystem();
+    const colaboradorData = user.getColaborador as any;
+
+    if (colaboradorData?.cod_empresa) {
+      filtros.codEmpresa = colaboradorData.cod_empresa;
+      filtros.codColigada = colaboradorData.codcoligada;
+
+      // CPF vem do backend automaticamente, então não precisa setar aqui
+    }
+  }
+
   await buscar();
 });
 </script>
