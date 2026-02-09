@@ -22,8 +22,10 @@
               item-value="codEmpresa"
               label="Empresa"
               clearable
-              density="comfortable"
+              density="compact"
               @update:model-value="onEmpresaChange"
+              variant="outlined"
+              hide-details
             />
           </v-col>
 
@@ -33,7 +35,9 @@
               :items="meses"
               label="Mês"
               clearable
-              density="comfortable"
+              density="compact"
+              variant="outlined"
+              hide-details
             />
           </v-col>
 
@@ -42,8 +46,10 @@
               v-model="filtros.anoRef"
               :items="anos"
               label="Ano"
+              variant="outlined"
               clearable
-              density="comfortable"
+              density="compact"
+              hide-details
             />
           </v-col>
 
@@ -51,8 +57,10 @@
             <v-text-field
               v-model="filtros.nome"
               label="Nome do Colaborador"
+              variant="outlined"
               clearable
-              density="comfortable"
+              density="compact"
+              hide-details
               @keyup.enter="buscar"
             />
           </v-col>
@@ -84,14 +92,20 @@
           <!-- Nome do colaborador -->
           <template #[`item.colaborador`]="{ item }">
             <div>
-              <div class="font-weight-medium">{{ item.colaborador }}</div>
-              <div class="text-caption text-medium-emphasis">
-                {{ item.apelido }}
+              <div class="font-weight-medium">
+                <v-chip
+                  variant="flat"
+                  size="x-small"
+                  class="mx-1"
+                  density="default"
+                  >{{ item.apelido }}</v-chip
+                >
+                {{ item.colaborador }}
               </div>
+              <!-- <div class="text-caption text-medium-emphasis"></div> -->
             </div>
           </template>
 
-          <!-- Status Ativo -->
           <template #[`item.ativo`]="{ item }">
             <v-chip
               :color="item.ativo === 'S' ? 'success' : 'error'"
@@ -224,8 +238,8 @@ const anos = Array.from({ length: 5 }, (_, i) => {
 
 // Headers da tabela
 const headers = [
-  { title: "Colaborador", key: "colaborador", sortable: true, width: "200px" },
-  { title: "Status", key: "ativo", sortable: true, width: "120px" },
+  { title: "Colaborador", key: "colaborador", sortable: true },
+  { title: "Status", key: "ativo", sortable: true },
   {
     title: "Mês/Ano",
     key: "mesRef",
@@ -233,7 +247,7 @@ const headers = [
     width: "100px",
     value: (item: ColaboradorResumo) => `${item.mesRef}/${item.anoRef}`,
   },
-  { title: "Exportar", key: "exporta", sortable: false, width: "120px" },
+  { title: "Exportar", key: "exporta", sortable: false },
   { title: "Titular", key: "mTitular", sortable: true, align: "end" as const },
   {
     title: "Dependente",
