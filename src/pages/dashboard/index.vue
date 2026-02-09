@@ -1,210 +1,208 @@
 <template>
-  <v-container fluid>
-    <!-- Cabeçalho -->
-    <!-- <v-row class="mb-4">
-      <v-col cols="12">
-        <v-card elevation="0" class="bg-transparent">
-          <v-card-title class="text-h4 font-weight-bold d-flex align-center">
-            <v-icon class="mr-3" color="primary">mdi-view-dashboard</v-icon>
-            Dashboard
-          </v-card-title>
-        </v-card>
-      </v-col>
-    </v-row> -->
+  <!-- Cabeçalho -->
+  <div class="d-flex justify-space-between align-center mb-3">
+    <div>
+      <h1 class="text-h4 font-weight-bold">Dashboard</h1>
+      <p class="text-body-2 text-medium-emphasis">
+        Gestão de beneficiários - Controle de exportação para pagamento
+      </p>
+    </div>
+  </div>
 
-    <!-- Filtros -->
-    <v-card elevation="1" class="mb-2">
-      <v-card-title>
+  <!-- Filtros -->
+  <v-card elevation="1" class="mb-2">
+    <!-- <v-card-title>
         <v-icon class="mr-2">mdi-filter</v-icon>
         Período de Consulta
-      </v-card-title>
+      </v-card-title> -->
+    <v-card-text>
+      <v-row>
+        <v-col cols="12" md="3">
+          <v-select
+            v-model="filtros.mes"
+            :items="meses"
+            label="Mês"
+            item-title="nome"
+            item-value="valor"
+          />
+        </v-col>
+
+        <v-col cols="12" md="3">
+          <v-select v-model="filtros.ano" :items="anos" label="Ano" />
+        </v-col>
+
+        <v-col cols="12" md="4" class="d-flex align-center">
+          <v-btn color="primary" :loading="carregando" @click="buscarDados">
+            <v-icon start>mdi-magnify</v-icon>
+            Consultar uso
+          </v-btn>
+        </v-col>
+      </v-row>
+    </v-card-text>
+  </v-card>
+
+  <!-- Loading -->
+  <div v-if="carregando" class="text-center py-8">
+    <v-progress-circular indeterminate color="primary" size="64" />
+    <p class="text-h6 mt-4">Carregando seus dados...</p>
+  </div>
+
+  <!-- Cards de Gastos -->
+  <template v-else-if="dados">
+    <!-- Informações do Colaborador -->
+    <v-card elevation="1" class="mb-4">
       <v-card-text>
-        <v-row>
-          <v-col cols="12" md="3">
-            <v-select
-              v-model="filtros.mes"
-              :items="meses"
-              label="Mês"
-              item-title="nome"
-              item-value="valor"
-            />
+        <v-row align="center">
+          <v-col cols="12" md="8">
+            <div class="d-flex align-center">
+              <v-avatar color="primary" class="mr-4">
+                <v-icon color="white">mdi-account</v-icon>
+              </v-avatar>
+              <div>
+                <h3 class="text-h5">{{ dados.nome }}</h3>
+                <p class="text-body-1 text-grey-darken-1 ma-0">
+                  {{ dados.empresa }} • CPF: {{ formatarCpf(dados.cpf) }}
+                </p>
+              </div>
+            </div>
           </v-col>
-
-          <v-col cols="12" md="3">
-            <v-select v-model="filtros.ano" :items="anos" label="Ano" />
-          </v-col>
-
-          <v-col cols="12" md="4" class="d-flex align-center">
-            <v-btn color="primary" :loading="carregando" @click="buscarDados">
-              <v-icon start>mdi-magnify</v-icon>
-              Consultar uso
-            </v-btn>
+          <v-col cols="12" md="4" class="text-md-right">
+            <v-chip
+              :color="dados.status === 'S' ? 'success' : 'warning'"
+              variant="tonal"
+              size="large"
+            >
+              <v-icon start>
+                {{
+                  dados.status === "S" ? "mdi-check-circle" : "mdi-alert-circle"
+                }}
+              </v-icon>
+              {{ dados.status === "S" ? "Com Lançamento" : "Sem Lançamento" }}
+            </v-chip>
           </v-col>
         </v-row>
       </v-card-text>
     </v-card>
 
-    <!-- Loading -->
-    <div v-if="carregando" class="text-center py-8">
-      <v-progress-circular indeterminate color="primary" size="64" />
-      <p class="text-h6 mt-4">Carregando seus dados...</p>
-    </div>
+    <!-- Cards de Valores -->
+    <v-row>
+      <!-- Mensalidade Titular -->
+      <v-col cols="12" sm="6" md="4">
+        <v-card elevation="2" class="card-gasto titular">
+          <v-card-title class="bg-blue-lighten-5 d-flex align-center">
+            <v-icon class="mr-2" color="blue-darken-2" size="large"
+              >mdi-account-circle</v-icon
+            >
+            <span class="text-h6">Mensalidade Titular</span>
+          </v-card-title>
+          <v-card-text class="text-center py-6">
+            <div class="text-h4 font-weight-bold text-blue-darken-2">
+              {{ formatarMoeda(dados.mensalidadeTitular) }}
+            </div>
+            <p class="text-body-2 text-grey-darken-1 mt-2">
+              Valor da mensalidade do titular
+            </p>
+          </v-card-text>
+        </v-card>
+      </v-col>
 
-    <!-- Cards de Gastos -->
-    <template v-else-if="dados">
-      <!-- Informações do Colaborador -->
-      <v-card elevation="1" class="mb-4">
-        <v-card-text>
-          <v-row align="center">
-            <v-col cols="12" md="8">
-              <div class="d-flex align-center">
-                <v-avatar color="primary" class="mr-4">
-                  <v-icon color="white">mdi-account</v-icon>
-                </v-avatar>
-                <div>
-                  <h3 class="text-h5">{{ dados.nome }}</h3>
-                  <p class="text-body-1 text-grey-darken-1 ma-0">
-                    {{ dados.empresa }} • CPF: {{ formatarCpf(dados.cpf) }}
-                  </p>
-                </div>
-              </div>
-            </v-col>
-            <v-col cols="12" md="4" class="text-md-right">
-              <v-chip
-                :color="dados.status === 'S' ? 'success' : 'warning'"
-                variant="tonal"
-                size="large"
-              >
-                <v-icon start>
-                  {{
-                    dados.status === "S"
-                      ? "mdi-check-circle"
-                      : "mdi-alert-circle"
-                  }}
-                </v-icon>
-                {{ dados.status === "S" ? "Com Lançamento" : "Sem Lançamento" }}
-              </v-chip>
-            </v-col>
-          </v-row>
-        </v-card-text>
-      </v-card>
+      <!-- Mensalidade Dependentes -->
+      <v-col cols="12" sm="6" md="4">
+        <v-card elevation="2" class="card-gasto dependentes">
+          <v-card-title class="bg-green-lighten-5 d-flex align-center">
+            <v-icon class="mr-2" color="green-darken-2" size="large"
+              >mdi-account-multiple</v-icon
+            >
+            <span class="text-h6">Mensalidade Dependentes</span>
+          </v-card-title>
+          <v-card-text class="text-center py-6">
+            <div class="text-h4 font-weight-bold text-green-darken-2">
+              {{ formatarMoeda(dados.mensalidadeDependente) }}
+            </div>
+            <p class="text-body-2 text-grey-darken-1 mt-2">
+              Valor total dos dependentes
+            </p>
+          </v-card-text>
+        </v-card>
+      </v-col>
 
-      <!-- Cards de Valores -->
-      <v-row>
-        <!-- Mensalidade Titular -->
-        <v-col cols="12" sm="6" md="4">
-          <v-card elevation="3" class="card-gasto titular">
-            <v-card-title class="bg-blue-lighten-5 d-flex align-center">
-              <v-icon class="mr-2" color="blue-darken-2" size="large"
-                >mdi-account-circle</v-icon
-              >
-              <span class="text-h6">Mensalidade Titular</span>
-            </v-card-title>
-            <v-card-text class="text-center py-6">
-              <div class="text-h4 font-weight-bold text-blue-darken-2">
-                {{ formatarMoeda(dados.mensalidadeTitular) }}
-              </div>
-              <p class="text-body-2 text-grey-darken-1 mt-2">
-                Valor da mensalidade do titular
-              </p>
-            </v-card-text>
-          </v-card>
-        </v-col>
+      <!-- Consumo -->
+      <v-col cols="12" sm="6" md="4">
+        <v-card elevation="2" class="card-gasto consumo rounded-sm">
+          <v-card-title class="bg-orange-lighten-5 d-flex align-center">
+            <v-icon class="mr-2" color="orange-darken-2" size="large"
+              >mdi-medical-bag</v-icon
+            >
+            <span class="text-h6">Consumo</span>
+          </v-card-title>
+          <v-card-text class="text-center py-6">
+            <div class="text-h4 font-weight-bold text-orange-darken-2">
+              {{ formatarMoeda(dados.consumo) }}
+            </div>
+            <p class="text-body-2 text-grey-darken-1 mt-2">
+              Consultas e procedimentos utilizados
+            </p>
+          </v-card-text>
+        </v-card>
+      </v-col>
 
-        <!-- Mensalidade Dependentes -->
-        <v-col cols="12" sm="6" md="4">
-          <v-card elevation="3" class="card-gasto dependentes">
-            <v-card-title class="bg-green-lighten-5 d-flex align-center">
-              <v-icon class="mr-2" color="green-darken-2" size="large"
-                >mdi-account-multiple</v-icon
-              >
-              <span class="text-h6">Mensalidade Dependentes</span>
-            </v-card-title>
-            <v-card-text class="text-center py-6">
-              <div class="text-h4 font-weight-bold text-green-darken-2">
-                {{ formatarMoeda(dados.mensalidadeDependente) }}
-              </div>
-              <p class="text-body-2 text-grey-darken-1 mt-2">
-                Valor total dos dependentes
-              </p>
-            </v-card-text>
-          </v-card>
-        </v-col>
+      <!-- Valor Total -->
+      <v-col cols="12" sm="6" md="6">
+        <v-card elevation="3" class="card-gasto total destaque pa-1 rounded-sm">
+          <v-card-title class="bg-purple-lighten-5 d-flex align-center">
+            <v-icon class="mr-2" color="purple-darken-2" size="large"
+              >mdi-calculator</v-icon
+            >
+            <span class="text-h6">Valor Total</span>
+          </v-card-title>
+          <v-card-text class="text-center py-6">
+            <div class="text-h3 font-weight-bold text-purple-darken-2">
+              {{ formatarMoeda(dados.valorTotal) }}
+            </div>
+            <p class="text-body-2 text-grey-darken-1 mt-2">
+              Mensalidades + Consumo
+            </p>
+          </v-card-text>
+        </v-card>
+      </v-col>
 
-        <!-- Consumo -->
-        <v-col cols="12" sm="6" md="4">
-          <v-card elevation="3" class="card-gasto consumo">
-            <v-card-title class="bg-orange-lighten-5 d-flex align-center">
-              <v-icon class="mr-2" color="orange-darken-2" size="large"
-                >mdi-medical-bag</v-icon
-              >
-              <span class="text-h6">Consumo</span>
-            </v-card-title>
-            <v-card-text class="text-center py-6">
-              <div class="text-h4 font-weight-bold text-orange-darken-2">
-                {{ formatarMoeda(dados.consumo) }}
-              </div>
-              <p class="text-body-2 text-grey-darken-1 mt-2">
-                Consultas e procedimentos utilizados
-              </p>
-            </v-card-text>
-          </v-card>
-        </v-col>
+      <v-col cols="12" sm="6" md="6">
+        <v-card
+          elevation="3"
+          class="card-gasto liquido destaque pa-1 rounded-sm"
+        >
+          <v-card-title class="bg-red-lighten-5 d-flex align-center">
+            <v-icon class="mr-2" color="red-darken-2" size="large"
+              >mdi-currency-usd</v-icon
+            >
+            <span class="text-h6">Valor Líquido</span>
+          </v-card-title>
+          <v-card-text class="text-center py-6">
+            <div class="text-h3 font-weight-bold text-red-darken-2">
+              {{ formatarMoeda(dados.valorLiquido) }}
+            </div>
+            <p class="text-body-2 text-grey-darken-1 mt-2">
+              Valor descontado do seu salário
+            </p>
+            <v-divider class="my-3" />
+            <v-chip
+              :color="dados.status === 'S' ? 'success' : 'warning'"
+              variant="flat"
+              size="small"
+            >
+              {{
+                dados.status === "S"
+                  ? "Será descontado na folha"
+                  : "Não será descontado"
+              }}
+            </v-chip>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
 
-        <!-- Valor Total -->
-        <v-col cols="12" sm="6" md="6">
-          <v-card elevation="3" class="card-gasto total destaque">
-            <v-card-title class="bg-purple-lighten-5 d-flex align-center">
-              <v-icon class="mr-2" color="purple-darken-2" size="large"
-                >mdi-calculator</v-icon
-              >
-              <span class="text-h6">Valor Total</span>
-            </v-card-title>
-            <v-card-text class="text-center py-6">
-              <div class="text-h3 font-weight-bold text-purple-darken-2">
-                {{ formatarMoeda(dados.valorTotal) }}
-              </div>
-              <p class="text-body-2 text-grey-darken-1 mt-2">
-                Mensalidades + Consumo
-              </p>
-            </v-card-text>
-          </v-card>
-        </v-col>
-
-        <v-col cols="12" sm="6" md="6">
-          <v-card elevation="3" class="card-gasto liquido destaque">
-            <v-card-title class="bg-red-lighten-5 d-flex align-center">
-              <v-icon class="mr-2" color="red-darken-2" size="large"
-                >mdi-currency-usd</v-icon
-              >
-              <span class="text-h6">Valor Líquido</span>
-            </v-card-title>
-            <v-card-text class="text-center py-6">
-              <div class="text-h3 font-weight-bold text-red-darken-2">
-                {{ formatarMoeda(dados.valorLiquido) }}
-              </div>
-              <p class="text-body-2 text-grey-darken-1 mt-2">
-                Valor descontado do seu salário
-              </p>
-              <v-divider class="my-3" />
-              <v-chip
-                :color="dados.status === 'S' ? 'success' : 'warning'"
-                variant="flat"
-                size="small"
-              >
-                {{
-                  dados.status === "S"
-                    ? "Será descontado na folha"
-                    : "Não será descontado"
-                }}
-              </v-chip>
-            </v-card-text>
-          </v-card>
-        </v-col>
-      </v-row>
-
-      <!-- Informações Adicionais -->
-      <!-- <v-card elevation="1" class="mt-4">
+    <!-- Informações Adicionais -->
+    <!-- <v-card elevation="1" class="mt-4">
         <v-card-title>
           <v-icon class="mr-2">mdi-information</v-icon>
           Informações Adicionais
@@ -233,30 +231,29 @@
           </v-row>
         </v-card-text>
       </v-card> -->
+  </template>
+
+  <!-- Estado vazio -->
+  <v-card v-else-if="!carregando" elevation="1">
+    <v-card-text class="text-center py-12">
+      <v-icon size="80" color="grey-lighten-1" class="mb-4"
+        >mdi-file-search</v-icon
+      >
+      <h3 class="text-h5 mb-2">Nenhum dado encontrado</h3>
+      <p class="text-body-1 text-grey-darken-1">
+        Não foram encontrados dados para o período selecionado. Tente selecionar
+        um período diferente.
+      </p>
+    </v-card-text>
+  </v-card>
+
+  <!-- Snackbar -->
+  <v-snackbar v-model="snackbar.show" :color="snackbar.color" timeout="4000">
+    {{ snackbar.message }}
+    <template #actions>
+      <v-btn variant="text" @click="snackbar.show = false">Fechar</v-btn>
     </template>
-
-    <!-- Estado vazio -->
-    <v-card v-else-if="!carregando" elevation="1">
-      <v-card-text class="text-center py-12">
-        <v-icon size="80" color="grey-lighten-1" class="mb-4"
-          >mdi-file-search</v-icon
-        >
-        <h3 class="text-h5 mb-2">Nenhum dado encontrado</h3>
-        <p class="text-body-1 text-grey-darken-1">
-          Não foram encontrados dados para o período selecionado. Tente
-          selecionar um período diferente.
-        </p>
-      </v-card-text>
-    </v-card>
-
-    <!-- Snackbar -->
-    <v-snackbar v-model="snackbar.show" :color="snackbar.color" timeout="4000">
-      {{ snackbar.message }}
-      <template #actions>
-        <v-btn variant="text" @click="snackbar.show = false">Fechar</v-btn>
-      </template>
-    </v-snackbar>
-  </v-container>
+  </v-snackbar>
 </template>
 
 <script setup lang="ts">

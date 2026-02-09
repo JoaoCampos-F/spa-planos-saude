@@ -1,7 +1,7 @@
 <template>
   <v-container fluid>
     <!-- Formulário de Parâmetros -->
-    <v-card elevation="2" class="mb-2">
+    <v-card elevation="2" class="mb-1">
       <v-card-title> Parâmetros dos Relatórios </v-card-title>
 
       <v-card-text class="pa-3">

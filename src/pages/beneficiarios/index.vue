@@ -1,7 +1,7 @@
 <template>
-  <div class="pa-6">
+  <div class="pa-2">
     <!-- Header -->
-    <div class="d-flex justify-space-between align-center mb-6">
+    <div class="d-flex justify-space-between align-center mb-3">
       <div>
         <h1 class="text-h4 font-weight-bold">Beneficiários</h1>
         <p class="text-body-2 text-medium-emphasis">
@@ -11,7 +11,7 @@
     </div>
 
     <!-- Filtros -->
-    <v-card class="mb-1" elevation="1">
+    <v-card class="mb-2" elevation="1">
       <v-card-text>
         <v-row>
           <v-col cols="12" md="3">
@@ -248,7 +248,12 @@ const anos = Array.from({ length: 5 }, (_, i) => {
 });
 
 const headers = [
-  { title: "Colaborador", key: "colaborador", sortable: true },
+  {
+    title: "Colaborador",
+    key: "colaborador",
+    sortable: true,
+    minWidth: "400px",
+  },
   { title: "Status", key: "ativo", sortable: true },
   {
     title: "Mês/Ano",
@@ -257,12 +262,13 @@ const headers = [
     width: "100px",
     value: (item: ColaboradorResumo) => `${item.mesRef}/${item.anoRef}`,
   },
-  { title: "Exportar", key: "exporta", sortable: false },
+  { title: "Exportar", key: "exporta", sortable: false, minWidth: "110px" },
   {
     title: "Mens. Titular",
     key: "mTitular",
     sortable: true,
     align: "end" as const,
+    minWidth: "130px",
   },
   {
     title: "Mens. Dependente",
@@ -281,8 +287,15 @@ const headers = [
     key: "percEmpresa",
     sortable: true,
     align: "end" as const,
+    minWidth: "130px",
   },
-  { title: "Total", key: "valorTotal", sortable: true, align: "end" as const },
+  {
+    title: "Total",
+    key: "valorTotal",
+    sortable: true,
+    align: "end",
+    minWidth: "130px",
+  },
   {
     title: "Líquido",
     key: "valorLiquido",
