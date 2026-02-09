@@ -56,207 +56,217 @@
       </v-card-text>
     </v-card>
 
-  <!-- Loading -->
-  <div v-if="carregando" class="text-center py-8">
-    <v-progress-circular indeterminate color="primary" size="64" />
-    <p class="text-h6 mt-4">Carregando seus dados...</p>
-  </div>
+    <!-- Loading -->
+    <div v-if="carregando" class="text-center py-8">
+      <v-progress-circular indeterminate color="primary" size="64" />
+      <p class="text-h6 mt-4">Carregando seus dados...</p>
+    </div>
 
-  <!-- Conteúdo Principal -->
-  <template v-else-if="dados">
-    <!-- HERO SECTION - Valores Principais -->
-    <v-row class="mb-6">
-      <!-- Card Principal - Valor Líquido -->
-      <v-col cols="12" md="6">
-        <v-card
-          elevation="3"
-          class="hero-card"
-          :class="{ 'hero-card--warning': dados.status !== 'S' }"
-        >
-          <v-card-text class="pa-6 pa-md-8">
-            <div class="d-flex align-center mb-4">
-              <v-chip
-                :color="dados.status === 'S' ? 'success' : 'warning'"
-                variant="flat"
-                size="default"
-                class="px-4"
-              >
-                <v-icon start size="small">
+    <!-- Conteúdo Principal -->
+    <template v-else-if="dados">
+      <!-- HERO SECTION - Valores Principais -->
+      <v-row class="mb-6">
+        <!-- Card Principal - Valor Líquido -->
+        <v-col cols="12" md="6">
+          <v-card
+            elevation="3"
+            class="hero-card"
+            :class="{ 'hero-card--warning': dados.status !== 'S' }"
+          >
+            <v-card-text class="pa-6 pa-md-8">
+              <div class="d-flex align-center mb-4">
+                <v-chip
+                  :color="dados.status === 'S' ? 'success' : 'warning'"
+                  variant="flat"
+                  size="default"
+                  class="px-4"
+                >
+                  <v-icon start size="small">
+                    {{
+                      dados.status === "S"
+                        ? "mdi-check-circle"
+                        : "mdi-alert-circle"
+                    }}
+                  </v-icon>
                   {{
                     dados.status === "S"
-                      ? "mdi-check-circle"
-                      : "mdi-alert-circle"
+                      ? "Aprovado para desconto"
+                      : "Pendente de aprovação"
                   }}
-                </v-icon>
-                {{
-                  dados.status === "S"
-                    ? "Aprovado para desconto"
-                    : "Pendente de aprovação"
-                }}
-              </v-chip>
-            </div>
-            <div class="text-overline text-white mb-2 opacity-90">
-              VALOR A DESCONTAR
-            </div>
-            <div class="hero-value text-white mb-3">
-              {{ formatarMoeda(dados.valorLiquido) }}
-            </div>
-            <p class="text-body-2 text-white mb-0 opacity-80">
-              Este valor será descontado do seu salário em
-              {{ meta?.periodo || "breve" }}
-            </p>
-            <v-divider class="my-4 opacity-20" />
-            <div class="user-info-compact">
-              <div class="d-flex align-center">
-                <v-avatar color="white" size="40" class="mr-3">
-                  <v-icon color="primary" size="24">mdi-account</v-icon>
-                </v-avatar>
-                <div>
-                  <div class="text-subtitle-1 font-weight-medium text-white">
-                    {{ dados.nome }}
-                  </div>
-                  <div class="text-caption text-white opacity-80">
-                    {{ dados.empresa }} • {{ formatarCpf(dados.cpf) }}
+                </v-chip>
+              </div>
+              <div class="text-overline text-white mb-2 opacity-90">
+                VALOR A DESCONTAR
+              </div>
+              <div class="hero-value text-white mb-3">
+                {{ formatarMoeda(dados.valorLiquido) }}
+              </div>
+              <p class="text-body-2 text-white mb-0 opacity-80">
+                Este valor será descontado do seu salário em
+                {{ meta?.periodo || "breve" }}
+              </p>
+              <v-divider class="my-4 opacity-20" />
+              <div class="user-info-compact">
+                <div class="d-flex align-center">
+                  <v-avatar color="white" size="40" class="mr-3">
+                    <v-icon color="primary" size="24">mdi-account</v-icon>
+                  </v-avatar>
+                  <div>
+                    <div class="text-subtitle-1 font-weight-medium text-white">
+                      {{ dados.nome }}
+                    </div>
+                    <div class="text-caption text-white opacity-80">
+                      {{ dados.empresa }} • {{ formatarCpf(dados.cpf) }}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </v-card-text>
-        </v-card>
-      </v-col>
+            </v-card-text>
+          </v-card>
+        </v-col>
 
-      <!-- Card Secundário - Valor Total -->
-      <v-col cols="12" md="6">
-        <v-card elevation="2" class="hero-card-secondary h-100">
-          <v-card-text class="pa-6 pa-md-8">
-            <div class="d-flex align-center mb-3">
-              <v-avatar color="primary" variant="tonal" size="48" class="mr-3">
-                <v-icon color="primary" size="28">mdi-calculator</v-icon>
-              </v-avatar>
-              <div class="text-overline text-medium-emphasis">
-                VALOR TOTAL
-              </div>
-            </div>
-            <div class="hero-value-secondary mb-3">
-              {{ formatarMoeda(dados.valorTotal) }}
-            </div>
-            <div class="breakdown-info">
-              <div class="d-flex justify-space-between mb-2">
-                <span class="text-body-2 text-medium-emphasis"
-                  >Mensalidades</span
+        <!-- Card Secundário - Valor Total -->
+        <v-col cols="12" md="6">
+          <v-card elevation="2" class="hero-card-secondary h-100">
+            <v-card-text class="pa-6 pa-md-8">
+              <div class="d-flex align-center mb-3">
+                <v-avatar
+                  color="primary"
+                  variant="tonal"
+                  size="48"
+                  class="mr-3"
                 >
-                <span class="text-body-2 font-weight-medium">{{
-                  formatarMoeda(
-                    dados.mensalidadeTitular + dados.mensalidadeDependente,
-                  )
-                }}</span>
+                  <v-icon color="primary" size="28">mdi-calculator</v-icon>
+                </v-avatar>
+                <div class="text-overline text-medium-emphasis">
+                  VALOR TOTAL
+                </div>
               </div>
-              <div class="d-flex justify-space-between">
-                <span class="text-body-2 text-medium-emphasis"
-                  >Coparticipação</span
+              <div class="hero-value-secondary mb-3">
+                {{ formatarMoeda(dados.valorTotal) }}
+              </div>
+              <div class="breakdown-info">
+                <div class="d-flex justify-space-between mb-2">
+                  <span class="text-body-2 text-medium-emphasis"
+                    >Mensalidades</span
+                  >
+                  <span class="text-body-2 font-weight-medium">{{
+                    formatarMoeda(
+                      dados.mensalidadeTitular + dados.mensalidadeDependente,
+                    )
+                  }}</span>
+                </div>
+                <div class="d-flex justify-space-between">
+                  <span class="text-body-2 text-medium-emphasis"
+                    >Coparticipação</span
+                  >
+                  <span class="text-body-2 font-weight-medium">{{
+                    formatarMoeda(dados.consumo)
+                  }}</span>
+                </div>
+              </div>
+            </v-card-text>
+          </v-card>
+        </v-col>
+      </v-row>
+
+      <!-- BREAKDOWN SECTION - Detalhamento -->
+      <div class="text-overline text-medium-emphasis mb-3 px-1">
+        DETALHAMENTO DOS CUSTOS
+      </div>
+      <v-row>
+        <!-- Card Titular -->
+        <v-col cols="12" sm="6" md="4">
+          <v-card elevation="1" class="detail-card h-100" hover>
+            <v-card-text class="pa-5">
+              <div class="d-flex align-center mb-4">
+                <v-avatar
+                  color="primary"
+                  variant="tonal"
+                  size="44"
+                  class="mr-3"
                 >
-                <span class="text-body-2 font-weight-medium">{{
-                  formatarMoeda(dados.consumo)
-                }}</span>
+                  <v-icon color="primary" size="24">mdi-account-circle</v-icon>
+                </v-avatar>
+                <div class="text-subtitle-2 text-medium-emphasis">
+                  Mensalidade Titular
+                </div>
               </div>
-            </div>
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
-
-    <!-- BREAKDOWN SECTION - Detalhamento -->
-    <div class="text-overline text-medium-emphasis mb-3 px-1">
-      DETALHAMENTO DOS CUSTOS
-    </div>
-    <v-row>
-      <!-- Card Titular -->
-      <v-col cols="12" sm="6" md="4">
-        <v-card elevation="1" class="detail-card h-100" hover>
-          <v-card-text class="pa-5">
-            <div class="d-flex align-center mb-4">
-              <v-avatar color="primary" variant="tonal" size="44" class="mr-3">
-                <v-icon color="primary" size="24">mdi-account-circle</v-icon>
-              </v-avatar>
-              <div class="text-subtitle-2 text-medium-emphasis">
-                Mensalidade Titular
+              <div class="detail-value text-primary">
+                {{ formatarMoeda(dados.mensalidadeTitular) }}
               </div>
-            </div>
-            <div class="detail-value text-primary">
-              {{ formatarMoeda(dados.mensalidadeTitular) }}
-            </div>
-          </v-card-text>
-        </v-card>
-      </v-col>
+            </v-card-text>
+          </v-card>
+        </v-col>
 
-      <!-- Card Dependentes -->
-      <v-col cols="12" sm="6" md="4">
-        <v-card elevation="1" class="detail-card h-100" hover>
-          <v-card-text class="pa-5">
-            <div class="d-flex align-center mb-4">
-              <v-avatar
-                color="secondary"
-                variant="tonal"
-                size="44"
-                class="mr-3"
-              >
-                <v-icon color="secondary" size="24"
-                  >mdi-account-multiple</v-icon
+        <!-- Card Dependentes -->
+        <v-col cols="12" sm="6" md="4">
+          <v-card elevation="1" class="detail-card h-100" hover>
+            <v-card-text class="pa-5">
+              <div class="d-flex align-center mb-4">
+                <v-avatar
+                  color="secondary"
+                  variant="tonal"
+                  size="44"
+                  class="mr-3"
                 >
-              </v-avatar>
-              <div class="text-subtitle-2 text-medium-emphasis">
-                Mensalidade Dependentes
+                  <v-icon color="secondary" size="24"
+                    >mdi-account-multiple</v-icon
+                  >
+                </v-avatar>
+                <div class="text-subtitle-2 text-medium-emphasis">
+                  Mensalidade Dependentes
+                </div>
               </div>
-            </div>
-            <div class="detail-value text-secondary">
-              {{ formatarMoeda(dados.mensalidadeDependente) }}
-            </div>
-          </v-card-text>
-        </v-card>
-      </v-col>
-
-      <!-- Card Consumo -->
-      <v-col cols="12" sm="6" md="4">
-        <v-card elevation="1" class="detail-card h-100" hover>
-          <v-card-text class="pa-5">
-            <div class="d-flex align-center mb-4">
-              <v-avatar color="info" variant="tonal" size="44" class="mr-3">
-                <v-icon color="info" size="24">mdi-medical-bag</v-icon>
-              </v-avatar>
-              <div class="text-subtitle-2 text-medium-emphasis">
-                Coparticipação
+              <div class="detail-value text-secondary">
+                {{ formatarMoeda(dados.mensalidadeDependente) }}
               </div>
-            </div>
-            <div class="detail-value text-info">
-              {{ formatarMoeda(dados.consumo) }}
-            </div>
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
-  </template>
+            </v-card-text>
+          </v-card>
+        </v-col>
 
-  <!-- Estado vazio -->
-  <v-card v-else-if="!carregando" elevation="1">
-    <v-card-text class="text-center py-12">
-      <v-icon size="80" color="grey-lighten-1" class="mb-4"
-        >mdi-file-search</v-icon
-      >
-      <h3 class="text-h5 mb-2">Nenhum dado encontrado</h3>
-      <p class="text-body-1 text-grey-darken-1">
-        Não foram encontrados dados para o período selecionado. Tente selecionar
-        um período diferente.
-      </p>
-    </v-card-text>
-  </v-card>
-
-  <!-- Snackbar -->
-  <v-snackbar v-model="snackbar.show" :color="snackbar.color" timeout="4000">
-    {{ snackbar.message }}
-    <template #actions>
-      <v-btn variant="text" @click="snackbar.show = false">Fechar</v-btn>
+        <!-- Card Consumo -->
+        <v-col cols="12" sm="6" md="4">
+          <v-card elevation="1" class="detail-card h-100" hover>
+            <v-card-text class="pa-5">
+              <div class="d-flex align-center mb-4">
+                <v-avatar color="info" variant="tonal" size="44" class="mr-3">
+                  <v-icon color="info" size="24">mdi-medical-bag</v-icon>
+                </v-avatar>
+                <div class="text-subtitle-2 text-medium-emphasis">
+                  Coparticipação
+                </div>
+              </div>
+              <div class="detail-value text-info">
+                {{ formatarMoeda(dados.consumo) }}
+              </div>
+            </v-card-text>
+          </v-card>
+        </v-col>
+      </v-row>
     </template>
-  </v-snackbar>
+
+    <!-- Estado vazio -->
+    <v-card v-else-if="!carregando" elevation="1">
+      <v-card-text class="text-center py-12">
+        <v-icon size="80" color="grey-lighten-1" class="mb-4"
+          >mdi-file-search</v-icon
+        >
+        <h3 class="text-h5 mb-2">Nenhum dado encontrado</h3>
+        <p class="text-body-1 text-grey-darken-1">
+          Não foram encontrados dados para o período selecionado. Tente
+          selecionar um período diferente.
+        </p>
+      </v-card-text>
+    </v-card>
+
+    <!-- Snackbar -->
+    <v-snackbar v-model="snackbar.show" :color="snackbar.color" timeout="4000">
+      {{ snackbar.message }}
+      <template #actions>
+        <v-btn variant="text" @click="snackbar.show = false">Fechar</v-btn>
+      </template>
+    </v-snackbar>
   </v-container>
 </template>
 
