@@ -16,6 +16,7 @@
     <!-- MÓDULO IMPORTAÇÃO -->
     <SubheaderGroup name="módulos" :rail="isRail()">
       <MenuItemSidebar
+        v-can:role="['ADMIN', 'DP']"
         icon="mdi-cloud-download"
         name="Dados para Importação"
         :rail="isRail()"
@@ -23,6 +24,15 @@
       />
 
       <MenuItemSidebar
+        v-can:role="['COLABORADOR', 'ADMIN', 'DP']"
+        icon="mdi-view-dashboard"
+        name="Meu Dashboard"
+        :rail="isRail()"
+        to="/dashboard"
+      />
+
+      <MenuItemSidebar
+        v-can:role="['ADMIN', 'DP']"
         icon="mdi-account-multiple"
         name="Colaboradores"
         :rail="isRail()"
@@ -30,6 +40,7 @@
       />
 
       <MenuItemSidebar
+        v-can:role="['ADMIN', 'DP']"
         icon="mdi-history"
         name="Histórico"
         :rail="isRail()"

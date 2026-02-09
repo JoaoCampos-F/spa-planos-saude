@@ -7,6 +7,7 @@ import PageImportacao from "@/pages/importacao/index.vue";
 import PageColaboradores from "@/pages/colaboradores/index.vue";
 import PageProcessos from "@/pages/processos/index.vue";
 import PageProcessosHistorico from "@/pages/processos/historico.vue";
+import PageDashboard from "@/pages/dashboard/index.vue";
 
 import PageRelatorios from "@/pages/relatorios/index.vue";
 
@@ -33,6 +34,12 @@ const router = createRouter({
           name: "PageColaboradores",
           component: PageColaboradores,
           meta: { requiresAuth: true, roles: ["ADMIN", "DP"] },
+        },
+        {
+          path: "/dashboard",
+          name: "PageDashboard",
+          component: PageDashboard,
+          meta: { requiresAuth: true, roles: ["COLABORADOR", "ADMIN", "DP"] },
         },
         {
           path: "/processos/historico",
@@ -71,12 +78,21 @@ router.beforeEach((to, from, next) => {
       if (userRoles.includes("ADMIN") || userRoles.includes("DP")) {
         next({ name: "PageImportacao" });
         return;
+      } else if (userRoles.includes("COLABORADOR")) {
+        next({ name: "PageDashboard" });
+        return;
       } else {
         next({ name: "PageRelatorios" });
         return;
       }
     } else {
-      next({ name: "PageRelatorios" });
+      // Enquanto carrega, redireciona para dashboard se for colaborador
+      const userRoles = storePermission.getRoles;
+      if (userRoles.includes("COLABORADOR")) {
+        next({ name: "PageDashboard" });
+      } else {
+        next({ name: "PageRelatorios" });
+      }
       return;
     }
   }

@@ -30,6 +30,13 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
+    '/dashboard/': RouteRecordInfo<
+      '/dashboard/',
+      '/dashboard',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
     '/importacao/': RouteRecordInfo<
       '/importacao/',
       '/importacao',
@@ -81,6 +88,12 @@ declare module 'vue-router/auto-routes' {
     'src/pages/colaboradores/index.vue': {
       routes:
         | '/colaboradores/'
+      views:
+        | never
+    }
+    'src/pages/dashboard/index.vue': {
+      routes:
+        | '/dashboard/'
       views:
         | never
     }
