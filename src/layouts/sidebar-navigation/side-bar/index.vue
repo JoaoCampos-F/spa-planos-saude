@@ -34,9 +34,9 @@
       <MenuItemSidebar
         v-can:role="['ADMIN', 'DP']"
         icon="mdi-account-multiple"
-        name="Colaboradores"
+        name="Beneficiários"
         :rail="isRail()"
-        to="/colaboradores"
+        to="/beneficiarios"
       />
 
       <MenuItemSidebar

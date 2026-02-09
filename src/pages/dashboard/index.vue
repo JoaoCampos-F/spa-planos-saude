@@ -1,25 +1,20 @@
 <template>
   <v-container fluid>
     <!-- Cabeçalho -->
-    <v-row class="mb-4">
+    <!-- <v-row class="mb-4">
       <v-col cols="12">
         <v-card elevation="0" class="bg-transparent">
           <v-card-title class="text-h4 font-weight-bold d-flex align-center">
-            <v-icon class="mr-3" color="primary" size="large"
-              >mdi-view-dashboard</v-icon
-            >
-            Dashboard - Meus Gastos
+            <v-icon class="mr-3" color="primary">mdi-view-dashboard</v-icon>
+            Dashboard
           </v-card-title>
-          <v-card-text class="text-body-1">
-            Visualize seus gastos com plano de saúde de forma detalhada
-          </v-card-text>
         </v-card>
       </v-col>
-    </v-row>
+    </v-row> -->
 
     <!-- Filtros -->
-    <v-card elevation="1" class="mb-4">
-      <v-card-title class="bg-grey-lighten-4">
+    <v-card elevation="1" class="mb-2">
+      <v-card-title>
         <v-icon class="mr-2">mdi-filter</v-icon>
         Período de Consulta
       </v-card-title>
@@ -30,32 +25,19 @@
               v-model="filtros.mes"
               :items="meses"
               label="Mês"
-              variant="outlined"
-              density="comfortable"
               item-title="nome"
               item-value="valor"
             />
           </v-col>
 
           <v-col cols="12" md="3">
-            <v-select
-              v-model="filtros.ano"
-              :items="anos"
-              label="Ano"
-              variant="outlined"
-              density="comfortable"
-            />
+            <v-select v-model="filtros.ano" :items="anos" label="Ano" />
           </v-col>
 
           <v-col cols="12" md="4" class="d-flex align-center">
-            <v-btn
-              color="primary"
-              size="large"
-              :loading="carregando"
-              @click="buscarDados"
-            >
+            <v-btn color="primary" :loading="carregando" @click="buscarDados">
               <v-icon start>mdi-magnify</v-icon>
-              Consultar Gastos
+              Consultar uso
             </v-btn>
           </v-col>
         </v-row>
@@ -171,7 +153,7 @@
 
         <!-- Valor Total -->
         <v-col cols="12" sm="6" md="6">
-          <v-card elevation="3" class="card-gasto total">
+          <v-card elevation="3" class="card-gasto total destaque">
             <v-card-title class="bg-purple-lighten-5 d-flex align-center">
               <v-icon class="mr-2" color="purple-darken-2" size="large"
                 >mdi-calculator</v-icon
@@ -189,7 +171,6 @@
           </v-card>
         </v-col>
 
-        <!-- Valor Líquido -->
         <v-col cols="12" sm="6" md="6">
           <v-card elevation="3" class="card-gasto liquido destaque">
             <v-card-title class="bg-red-lighten-5 d-flex align-center">
@@ -223,7 +204,7 @@
       </v-row>
 
       <!-- Informações Adicionais -->
-      <v-card elevation="1" class="mt-4">
+      <!-- <v-card elevation="1" class="mt-4">
         <v-card-title>
           <v-icon class="mr-2">mdi-information</v-icon>
           Informações Adicionais
@@ -251,7 +232,7 @@
             </v-col>
           </v-row>
         </v-card-text>
-      </v-card>
+      </v-card> -->
     </template>
 
     <!-- Estado vazio -->
@@ -356,8 +337,6 @@ async function buscarDados() {
 
     dados.value = resposta.data;
     meta.value = resposta.meta;
-
-    mostrarSnackbar("Dados carregados com sucesso!", "success");
   } catch (error: any) {
     console.error("Erro ao buscar dashboard:", error);
 
@@ -419,10 +398,6 @@ onMounted(() => {
 
 .card-gasto.destaque {
   border: 2px solid #e3f2fd;
-}
-
-.card-gasto.destaque:hover {
-  border-color: #1976d2;
 }
 
 .text-h3,

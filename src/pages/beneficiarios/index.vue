@@ -3,15 +3,15 @@
     <!-- Header -->
     <div class="d-flex justify-space-between align-center mb-6">
       <div>
-        <h1 class="text-h4 font-weight-bold">Colaboradores</h1>
+        <h1 class="text-h4 font-weight-bold">Beneficiários</h1>
         <p class="text-body-2 text-medium-emphasis">
-          Gestão de colaboradores - Controle de exportação para pagamento
+          Gestão de beneficiários - Controle de exportação para pagamento
         </p>
       </div>
     </div>
 
     <!-- Filtros -->
-    <v-card class="mb-6" elevation="1">
+    <v-card class="mb-1" elevation="1">
       <v-card-text>
         <v-row>
           <v-col cols="12" md="3">
@@ -247,7 +247,6 @@ const anos = Array.from({ length: 5 }, (_, i) => {
   return { title: ano.toString(), value: ano.toString() };
 });
 
-// Headers da tabela
 const headers = [
   { title: "Colaborador", key: "colaborador", sortable: true },
   { title: "Status", key: "ativo", sortable: true },
@@ -259,9 +258,14 @@ const headers = [
     value: (item: ColaboradorResumo) => `${item.mesRef}/${item.anoRef}`,
   },
   { title: "Exportar", key: "exporta", sortable: false },
-  { title: "Titular", key: "mTitular", sortable: true, align: "end" as const },
   {
-    title: "Dependente",
+    title: "Mens. Titular",
+    key: "mTitular",
+    sortable: true,
+    align: "end" as const,
+  },
+  {
+    title: "Mens. Dependente",
     key: "mDependente",
     sortable: true,
     align: "end" as const,

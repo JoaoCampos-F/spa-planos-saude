@@ -1,12 +1,10 @@
 <template>
   <v-container fluid>
     <!-- Formulário de Parâmetros -->
-    <v-card elevation="2" class="mb-6">
-      <v-card-title class="bg-primary text-white">
-        Parâmetros dos Relatórios
-      </v-card-title>
+    <v-card elevation="2" class="mb-2">
+      <v-card-title> Parâmetros dos Relatórios </v-card-title>
 
-      <v-card-text class="pa-6">
+      <v-card-text class="pa-3">
         <v-row>
           <v-col cols="12" md="2">
             <v-autocomplete
@@ -39,7 +37,7 @@
             />
           </v-col>
 
-          <v-col cols="12" md="4">
+          <v-col cols="12" md="3">
             <v-autocomplete
               v-model="parametros.cpf"
               :items="colaboradores"
@@ -77,22 +75,23 @@
               hide-details
             />
           </v-col>
-        </v-row>
-
-        <v-row>
-          <v-col cols="12" class="d-flex align-center">
+          <v-col cols="1" class="d-flex align-center">
             <v-btn
               color="grey-darken-1"
               variant="outlined"
-              size="small"
               @click="limparParametros"
+              prepend-icon="mdi-refresh"
             >
-              <v-icon left size="small">mdi-refresh</v-icon>
-              Limpar Filtros
+              Limpar
             </v-btn>
           </v-col>
         </v-row>
+      </v-card-text>
+    </v-card>
 
+    <v-card elevation="2">
+      <v-card-title> Selecione o relatório desejado </v-card-title>
+      <v-card-text>
         <v-divider class="my-4" />
 
         <!-- Cards de Relatórios -->
@@ -269,6 +268,7 @@ import type {
   Contrato,
   ColaboradorSimplificado,
 } from "@/interfaces/api.interfaces";
+import { V } from "vue-router/dist/index-DvGaX1AX.mjs";
 
 const empresasHttp = new EmpresasHttp();
 const contratosHttp = new ContratosHttp();
@@ -355,7 +355,7 @@ const colaboradores = computed(() => {
     { cpf: undefined, label: "Todos" },
     ...colaboradoresData.value.map((c) => ({
       ...c,
-      label: `${c.nome} - ${c.cpf}`,
+      label: `${c.nome} `,
     })),
   ];
 });

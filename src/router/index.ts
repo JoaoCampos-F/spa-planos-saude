@@ -4,9 +4,7 @@ import PageNotFound from "@/pages/PageNotFound.vue";
 import keycloak from "@/config/keycloak";
 import { permissions } from "@/stores/permissionsStore";
 import PageImportacao from "@/pages/importacao/index.vue";
-import PageColaboradores from "@/pages/colaboradores/index.vue";
-import PageProcessos from "@/pages/processos/index.vue";
-import PageProcessosHistorico from "@/pages/processos/historico.vue";
+import PageBeneficiarios from "@/pages/beneficiarios/index.vue";
 import PageDashboard from "@/pages/dashboard/index.vue";
 
 import PageRelatorios from "@/pages/relatorios/index.vue";
@@ -30,9 +28,9 @@ const router = createRouter({
           meta: { requiresAuth: true, roles: ["ADMIN", "DP"] },
         },
         {
-          path: "/colaboradores",
-          name: "PageColaboradores",
-          component: PageColaboradores,
+          path: "/beneficiarios",
+          name: "PageBeneficiarios",
+          component: PageBeneficiarios,
           meta: { requiresAuth: true, roles: ["ADMIN", "DP"] },
         },
         {

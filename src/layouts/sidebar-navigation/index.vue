@@ -4,7 +4,7 @@
       <AppBar @toggle-drawer="toggleDrawer" />
       <MenuDrawer :drawer="drawer" @update:drawer="toggleDrawer" />
       <v-main :class="'fill-height theme-' + vuetify.theme.name.value">
-        <v-container class="px-7 mt-3" max-width="1920">
+        <v-container class="px-3 mt-0" max-width="1920">
           <router-view />
         </v-container>
         <AppFooter />
