@@ -40,14 +40,6 @@
       />
 
       <MenuItemSidebar
-        v-can:role="['ADMIN', 'DP']"
-        icon="mdi-history"
-        name="Histórico"
-        :rail="isRail()"
-        to="/processos/historico"
-      />
-
-      <MenuItemSidebar
         icon="mdi-chart-box-outline"
         name="Relatórios"
         :rail="isRail()"

@@ -200,11 +200,22 @@ const itemsPerPage = ref(10);
 const totalItems = ref(0);
 
 // Filtros
+function getMesAnoAnterior(): { mes: string; ano: string } {
+  const hoje = new Date();
+  const mesAtual = hoje.getMonth() + 1;
+  const anoAtual = hoje.getFullYear();
+  if (mesAtual === 1) {
+    return { mes: "12", ano: String(anoAtual - 1) };
+  }
+  return { mes: String(mesAtual - 1).padStart(2, "0"), ano: String(anoAtual) };
+}
+
+const mesAnoInicial = getMesAnoAnterior();
 const filtros = reactive({
   codEmpresa: undefined as number | undefined,
   codColigada: undefined as number | undefined,
-  mesRef: "02",
-  anoRef: "2026",
+  mesRef: mesAnoInicial.mes,
+  anoRef: mesAnoInicial.ano,
   nome: "",
 });
 

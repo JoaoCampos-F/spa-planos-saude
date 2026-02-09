@@ -21,14 +21,14 @@
     <!-- <app-launcher /> -->
 
     <v-toolbar-title class="d-flex justify-end mr-5">
-      <!-- <v-btn class="ma-1" density="comfortable" icon @click="toggleTheme">
+      <v-btn class="ma-1" density="comfortable" icon @click="toggleTheme">
         <v-icon
           :icon="isDarkTheme ? 'solar:sun-line-duotone' : 'solar:moon-broken'"
           size="21"
         />
       </v-btn>
 
-      <notification-box /> -->
+      <notification-box />
 
       <!-- <v-btn class="ma-1" density="comfortable" icon disabled>
         <v-icon icon="solar:inbox-line-line-duotone" size="21" />

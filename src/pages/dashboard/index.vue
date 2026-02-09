@@ -292,9 +292,20 @@ const dados = ref<DashboardColaboradorData | null>(null);
 const meta = ref<any>(null);
 
 // Filtros
+function getMesAnoAnterior(): { mes: number; ano: number } {
+  const hoje = new Date();
+  const mesAtual = hoje.getMonth() + 1;
+  const anoAtual = hoje.getFullYear();
+  if (mesAtual === 1) {
+    return { mes: 12, ano: anoAtual - 1 };
+  }
+  return { mes: mesAtual - 1, ano: anoAtual };
+}
+
+const mesAnoInicial = getMesAnoAnterior();
 const filtros = reactive({
-  mes: new Date().getMonth() + 1,
-  ano: new Date().getFullYear(),
+  mes: mesAnoInicial.mes,
+  ano: mesAnoInicial.ano,
 });
 
 // Snackbar

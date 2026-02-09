@@ -42,12 +42,6 @@ const router = createRouter({
           meta: { requiresAuth: true, roles: ["COLABORADOR", "ADMIN", "DP"] },
         },
         {
-          path: "/processos/historico",
-          name: "PageProcessosHistorico",
-          component: PageProcessosHistorico,
-          meta: { requiresAuth: true, roles: ["ADMIN", "DP"] },
-        },
-        {
           path: "/relatorios",
           name: "PageRelatorios",
           component: PageRelatorios,
