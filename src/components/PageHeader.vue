@@ -1,6 +1,6 @@
 <template>
-  <v-card flat color="transparent" class="mb-6">
-    <v-card-text class="px-0 py-4">
+  <v-card flat class="mb-6">
+    <v-card-text class="px-3 py-3">
       <div class="d-flex align-center">
         <v-avatar
           v-if="icon"

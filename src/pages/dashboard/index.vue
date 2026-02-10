@@ -1,8 +1,8 @@
 <template>
   <v-container fluid class="pa-0">
     <!-- Header compacto com filtros inline -->
-    <v-card flat color="transparent" class="mb-6">
-      <v-card-text class="px-0 py-4">
+    <v-card flat class="mb-6">
+      <v-card-text class="px-3 py-3">
         <v-row align="center">
           <v-col cols="12" md="6">
             <div class="d-flex align-center">

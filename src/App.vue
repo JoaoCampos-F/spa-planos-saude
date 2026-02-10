@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-main>
+    <v-main class="app-background">
       <!-- Tela de loading -->
       <!-- <LoadScreenCircular v-if="isLoading" /> -->
       <LoadScreenGradiente v-if="isLoading" />
@@ -29,3 +29,10 @@ onMounted(async () => {
   }
 });
 </script>
+
+<style>
+.v-main {
+  background-size: cover;
+  background-image: url("src/assets/background.png");
+}
+</style>

@@ -1,5 +1,6 @@
 import type { Directive, DirectiveBinding } from "vue";
 import { permissions } from "@/stores/permissionsStore";
+import { watch } from "vue";
 
 class Can {
   constructor(
@@ -12,6 +13,11 @@ class Can {
     const roles = storePermission.getRolesSystem;
     const rolesUser = storePermission.getRoles;
 
+    // Se ainda está carregando ou não tem roles, não permite
+    if (storePermission.isLoading || rolesUser.length === 0) {
+      return false;
+    }
+
     let nivel = 10000;
     for (const rule of rolesUser) {
       const index = roles.indexOf(rule);
@@ -19,7 +25,9 @@ class Can {
     }
 
     const nivelDoPapelDoElemento = roles.indexOf(userRole);
-    const nivelDoMaiorPapelDoUsuario = roles.indexOf(roles[nivel]);
+    const roleAtNivel = roles[nivel];
+    if (!roleAtNivel) return false;
+    const nivelDoMaiorPapelDoUsuario = roles.indexOf(roleAtNivel);
 
     if (nivelDoMaiorPapelDoUsuario <= nivelDoPapelDoElemento) {
       return true;
@@ -36,9 +44,16 @@ class Can {
 
   hasPermission(userPermissions: string = "") {
     const storePermission = permissions();
-    console.error;
+    
+    // Se ainda está carregando, não permite
+    if (storePermission.isLoading) {
+      return false;
+    }
+    
     const [permission, escopo] = userPermissions.split("#");
     if (
+      permission &&
+      escopo &&
       storePermission.getPermissions &&
       storePermission.getPermissions[permission]
     ) {
@@ -71,13 +86,7 @@ class Can {
 }
 
 const canDirective: Directive<HTMLElement> = {
-  mounted(
-    el: any,
-    binding: DirectiveBinding<{
-      arg: "role" | "permission";
-      value: string | string[];
-    }>
-  ) {
+  mounted(el: any, binding: any) {
     const modifierPermited: ("role" | "permission")[] = ["role", "permission"];
 
     if (binding.arg == undefined) {
@@ -89,12 +98,58 @@ const canDirective: Directive<HTMLElement> = {
       }] not found, use v-can: [${modifierPermited.join(" or ")}]`;
     }
 
-    //@ts-ignore
-    const can = new Can(binding.arg as "role" | "permission", binding.value);
+    // Cria um comentário placeholder para poder restaurar o elemento depois
+    const comment = document.createComment('v-can');
+    const parent = el.parentNode;
+    
+    // Armazena referências importantes
+    (el as any)._vCanParent = parent;
+    (el as any)._vCanComment = comment;
+    (el as any)._vCanNextSibling = el.nextSibling;
+    
+    // Função para verificar e aplicar permissão
+    const checkAndApply = () => {
+      const can = new Can(binding.arg as "role" | "permission", binding.value);
+      const allowed = can.isAllowed();
+      
+      if (!allowed) {
+        // Remove do DOM e coloca comentário no lugar
+        if (el.parentNode) {
+          el.parentNode.replaceChild(comment, el);
+        }
+      } else {
+        // Restaura no DOM se estava removido
+        if (comment.parentNode) {
+          comment.parentNode.replaceChild(el, comment);
+        }
+      }
+    };
 
-    const allowed = can.isAllowed();
-    if (!allowed && el.parentNode !== null) {
-      el.parentNode.removeChild(el);
+    // Aplica verificação inicial
+    checkAndApply();
+
+    // Observa mudanças na store de permissões
+    const permissionsStore = permissions();
+    const stopWatch = watch(
+      () => ({
+        roles: permissionsStore.getRoles,
+        loading: permissionsStore.isLoading,
+        permissions: permissionsStore.getPermissions,
+      }),
+      () => {
+        checkAndApply();
+      },
+      { deep: true }
+    );
+
+    // Armazena o cleanup para o unmounted
+    (el as any)._stopCanWatch = stopWatch;
+  },
+  
+  unmounted(el: any) {
+    // Limpa o watcher quando o elemento é desmontado
+    if ((el as any)._stopCanWatch) {
+      (el as any)._stopCanWatch();
     }
   },
 };

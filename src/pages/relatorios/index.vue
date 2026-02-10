@@ -8,18 +8,8 @@
     />
 
     <!-- Formulário de Parâmetros -->
-    <v-card
-      elevation="2"
-      class="mb-6"
-      style="
-        border-radius: 12px;
-        background: rgb(var(--v-theme-surface-container));
-      "
-    >
-      <v-card-title
-        class="pa-6"
-        style="background: rgb(var(--v-theme-surface-container-high))"
-      >
+    <v-card elevation="2" class="mb-6" style="border-radius: 12px">
+      <v-card-title class="pa-6">
         <div class="d-flex align-center">
           <v-avatar color="primary" variant="tonal" size="40" class="mr-3">
             <v-icon color="primary" size="24">mdi-tune</v-icon>
@@ -43,6 +33,7 @@
               clearable
               hide-details
               @update:model-value="onEmpresaChange"
+              :class="{ 'field-highlighted': isFieldHighlighted('empresa') }"
             />
           </v-col>
 
@@ -58,6 +49,7 @@
               density="compact"
               hide-details
               clearable
+              :class="{ 'field-highlighted': isFieldHighlighted('contrato') }"
             />
           </v-col>
 
@@ -73,6 +65,7 @@
               density="compact"
               hide-details
               clearable
+              :class="{ 'field-highlighted': isFieldHighlighted('cpf') }"
             />
           </v-col>
 
@@ -86,6 +79,7 @@
               variant="outlined"
               density="compact"
               hide-details
+              :class="{ 'field-highlighted': isFieldHighlighted('mes') }"
             />
           </v-col>
 
@@ -97,6 +91,7 @@
               variant="outlined"
               density="compact"
               hide-details
+              :class="{ 'field-highlighted': isFieldHighlighted('ano') }"
             />
           </v-col>
           <v-col cols="12" md="1" class="d-flex align-center">
@@ -139,6 +134,8 @@
               elevation="2"
               hover
               @click="gerarRelatorio('colaborador')"
+              @mouseenter="hoveredReport = 'colaborador'"
+              @mouseleave="hoveredReport = null"
               style="border-radius: 12px; cursor: pointer"
             >
               <v-card-text class="pa-5">
@@ -174,6 +171,8 @@
               elevation="2"
               hover
               @click="gerarRelatorio('empresa')"
+              @mouseenter="hoveredReport = 'empresa'"
+              @mouseleave="hoveredReport = null"
               style="border-radius: 12px; cursor: pointer"
             >
               <v-card-text class="pa-5">
@@ -208,6 +207,8 @@
               elevation="2"
               hover
               @click="gerarRelatorio('pagamento')"
+              @mouseenter="hoveredReport = 'pagamento'"
+              @mouseleave="hoveredReport = null"
               style="border-radius: 12px; cursor: pointer"
             >
               <v-card-text class="pa-5">
@@ -240,6 +241,8 @@
               elevation="2"
               hover
               @click="gerarRelatorio('nao-pagamento')"
+              @mouseenter="hoveredReport = 'nao-pagamento'"
+              @mouseleave="hoveredReport = null"
               style="border-radius: 12px; cursor: pointer"
             >
               <v-card-text class="pa-5">
@@ -272,6 +275,8 @@
               elevation="2"
               hover
               @click="gerarRelatorio('resumo-depto')"
+              @mouseenter="hoveredReport = 'resumo-depto'"
+              @mouseleave="hoveredReport = null"
               style="border-radius: 12px; cursor: pointer"
             >
               <v-card-text class="pa-5">
@@ -306,6 +311,8 @@
               elevation="2"
               hover
               @click="gerarRelatorio('resumo-centro-custo')"
+              @mouseenter="hoveredReport = 'resumo-centro-custo'"
+              @mouseleave="hoveredReport = null"
               style="border-radius: 12px; cursor: pointer"
             >
               <v-card-text class="pa-5">
@@ -362,8 +369,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue";
 import PageHeader from "@/components/PageHeader.vue";
-import { permissions } from "@/stores/permissionsStore";
-import { userSystem } from "@/stores/userSystem";
 import EmpresasHttp from "@/services/http/Empresas";
 import ContratosHttp from "@/services/http/Contratos";
 import ColaboradoresHttp from "@/services/http/Colaboradores";
@@ -373,7 +378,6 @@ import type {
   Contrato,
   ColaboradorSimplificado,
 } from "@/interfaces/api.interfaces";
-import { V } from "vue-router/dist/index-DvGaX1AX.mjs";
 
 const empresasHttp = new EmpresasHttp();
 const contratosHttp = new ContratosHttp();
@@ -429,16 +433,22 @@ const anos = computed(() => {
   return Array.from({ length: 5 }, (_, i) => String(anoAtual - i));
 });
 
-// Verifica se usuário é COLABORADOR (sem ser DP ou ADMIN)
-const isColaborador = computed(() => {
-  const permissionStore = permissions();
-  const roles = permissionStore.getRoles;
-  return (
-    roles.includes("COLABORADOR") &&
-    !roles.includes("DP") &&
-    !roles.includes("ADMIN")
-  );
-});
+const hoveredReport = ref<string | null>(null);
+
+const isFieldHighlighted = (fieldName: string) => {
+  if (!hoveredReport.value) return false;
+
+  const reportFields: Record<string, string[]> = {
+    colaborador: ["empresa", "contrato", "cpf", "mes", "ano"],
+    empresa: ["empresa", "contrato", "mes", "ano"],
+    pagamento: ["empresa", "contrato", "mes", "ano"],
+    "nao-pagamento": ["empresa", "contrato", "mes", "ano"],
+    "resumo-depto": ["empresa", "mes", "ano"],
+    "resumo-centro-custo": ["empresa", "mes", "ano"],
+  };
+
+  return reportFields[hoveredReport.value]?.includes(fieldName) || false;
+};
 
 const empresas = computed(() => {
   if (empresasData.value.length === 0) return [];
@@ -471,7 +481,7 @@ const colaboradores = computed(() => {
     { cpf: undefined, label: "Todos" },
     ...colaboradoresData.value.map((c) => ({
       ...c,
-      label: `${c.nome} `,
+      label: `${c.nome}`,
     })),
   ];
 });
@@ -479,23 +489,6 @@ const colaboradores = computed(() => {
 onMounted(() => {
   carregarEmpresas();
   carregarContratos();
-
-  // Se for COLABORADOR, pré-selecionar sua empresa e CPF
-  if (isColaborador.value) {
-    const user = userSystem();
-    const colaboradorData = user.getColaborador as any;
-
-    if (colaboradorData?.cod_empresa) {
-      parametros.value.codEmpresa = colaboradorData.cod_empresa;
-      parametros.value.codColigada = colaboradorData.codcoligada;
-      parametros.value.codFilial = colaboradorData.codfilial;
-      parametros.value.codBand = colaboradorData.cod_band;
-    }
-
-    if (colaboradorData?.cpf) {
-      parametros.value.cpf = colaboradorData.cpf;
-    }
-  }
 });
 
 // Funções
@@ -674,5 +667,18 @@ function mostrarErro(message: string) {
 
 .relatorio-card:active {
   transform: translateY(-2px);
+}
+
+/* Destaque dos campos quando hover no card */
+:deep(.field-highlighted .v-field) {
+  border-color: rgb(var(--v-theme-primary)) !important;
+  border-width: 2px !important;
+  transition: all 0.3s ease;
+}
+
+/* :deep(.field-highlighted .v-field__outline__start),
+:deep(.field-highlighted .v-field__outline__notch), */
+:deep(.field-highlighted) {
+  box-shadow: 0px 1px 5px rgba(var(--v-theme-primary), 0.7);
 }
 </style>

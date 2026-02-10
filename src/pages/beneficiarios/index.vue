@@ -8,11 +8,7 @@
     />
 
     <!-- Filtros -->
-    <v-card
-      class="mb-4"
-      elevation="2"
-      style="background: rgb(var(--v-theme-surface-container))"
-    >
+    <v-card class="mb-4" elevation="2">
       <v-card-text class="pa-6">
         <v-row>
           <v-col cols="12" md="3">
